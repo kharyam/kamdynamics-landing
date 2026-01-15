@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAM Dynamics | Technology & Aerial Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --kam-red: #FF0000;
+            --kam-black: #0a0a0a;
+            --kam-white: #ffffff;
+            --kam-gray: #1a1a1a;
+            --kam-light-gray: #333333;
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--kam-black);
+            color: var(--kam-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 0.75rem 5%;
+            transition: var(--transition-smooth);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        nav.scrolled {
+            padding: 0.5rem 5%;
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo svg {
+            height: 120px;
+            width: auto;
+            transition: var(--transition-smooth);
+        }
+
+        nav.scrolled .logo svg {
+            height: 70px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--kam-white);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition-smooth);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--kam-red);
+            transition: var(--transition-smooth);
+        }
+
+        .nav-links a:hover {
+            color: var(--kam-red);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 8rem 5% 4rem;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        /* Placeholder for video */
+        .hero-video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 1.5rem;
+            z-index: 0;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255, 0, 0, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .hero-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.5;
+            animation: grid-move 20s linear infinite;
+        }
+
+        @keyframes grid-move {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: var(--kam-red);
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.2s;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            /* Firefox-compatible gradient */
+            background: linear-gradient(135deg, #ffffff 0%, #ff0000 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -moz-background-clip: text;
+            -moz-text-fill-color: transparent;
+            color: transparent;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.4s;
+        }
+
+        /* Fallback for browsers that don't support background-clip */
+        @supports not (background-clip: text) {
+            .hero-title {
+                color: var(--kam-white);
+            }
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.6s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.8s;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid var(--kam-red);
+            background: var(--kam-red);
+            color: var(--kam-white);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            font-family: 'Work Sans', sans-serif;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 2;
+            transition: color 0.4s ease;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--kam-white);
+            transition: left 0.4s ease;
+            z-index: 1;
+        }
+
+        .btn:hover::before {
+            left: 0;
+        }
+
+        .btn:hover span {
+            color: var(--kam-red);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--kam-red);
+        }
+
+        .btn-secondary::before {
+            background: var(--kam-red);
+        }
+
+        .btn-secondary:hover span {
+            color: var(--kam-white);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 8rem 5%;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.9rem;
+            color: var(--kam-red);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 3rem;
+        }
+
+        .service-card {
+            background: var(--kam-gray);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--kam-red), transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease;
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover {
+            border-color: var(--kam-red);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(255, 0, 0, 0.2);
+        }
+
+        /* Icon SVG styles */
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 2rem;
+        }
+
+        .service-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .service-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--kam-white);
+        }
+
+        .service-description {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .service-features {
+            list-style: none;
+        }
+
+        .service-features li {
+            padding: 0.75rem 0;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .service-features li::before {
+            content: '▸';
+            color: var(--kam-red);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Portfolio Section */
+        .portfolio {
+            padding: 8rem 5%;
+            background: var(--kam-gray);
+            position: relative;
+        }
+
+        .portfolio-placeholder {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 6rem 2rem;
+            border: 2px dashed rgba(255, 0, 0, 0.3);
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .portfolio-placeholder h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--kam-red);
+        }
+
+        .portfolio-placeholder p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 8rem 5%;
+            position: relative;
+        }
+
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            background: var(--kam-gray);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 3rem;
+            margin-top: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--kam-white);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label .required {
+            color: var(--kam-red);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--kam-black);
+            border: 1px solid var(--kam-light-gray);
+            color: var(--kam-white);
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--kam-red);
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .form-error {
+            color: var(--kam-red);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .form-error.show {
+            display: block;
+        }
+
+        .form-group.error input,
+        .form-group.error textarea {
+            border-color: var(--kam-red);
+        }
+
+        .form-success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 1.5rem;
+            text-align: center;
+            color: #00ff00;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .form-success.show {
+            display: block;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            text-align: center;
+        }
+
+        .contact-item-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--kam-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.3rem;
+        }
+
+        .contact-item a {
+            color: var(--kam-white);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .contact-item a:hover {
+            color: var(--kam-red);
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 5%;
+            background: var(--kam-black);
+            border-top: 1px solid rgba(255, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--kam-gray);
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 4rem;
+            position: relative;
+            border: 2px solid var(--kam-red);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--kam-red);
+            color: var(--kam-white);
+            border: none;
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--kam-white);
+            color: var(--kam-red);
+            transform: rotate(90deg);
+        }
+
+        .about-header {
+            margin-bottom: 3rem;
+            display: flex;
+            gap: 3rem;
+            align-items: flex-start;
+        }
+
+        .about-photo-placeholder {
+            flex-shrink: 0;
+            width: 200px;
+            height: 200px;
+            background: var(--kam-black);
+            border: 3px solid var(--kam-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .about-info {
+            flex: 1;
+        }
+
+        .about-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: var(--kam-red);
+        }
+
+        .about-title {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .credentials {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .credential-badge {
+            background: var(--kam-black);
+            border: 1px solid var(--kam-red);
+            padding: 0.75rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--kam-red);
+            letter-spacing: 0.5px;
+        }
+
+        .about-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .about-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--kam-white);
+        }
+
+        .about-section p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .expertise-item {
+            background: var(--kam-black);
+            padding: 1.5rem;
+            border-left: 3px solid var(--kam-red);
+        }
+
+        .expertise-item h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--kam-white);
+        }
+
+        .expertise-item p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .certifications-section {
+            margin-top: 3rem;
+        }
+
+        .cert-category {
+            background: var(--kam-black);
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .cert-category-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition-smooth);
+        }
+
+        .cert-category-header:hover {
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .cert-category-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--kam-red);
+        }
+
+        .cert-toggle {
+            font-size: 1.5rem;
+            color: var(--kam-red);
+            transition: transform 0.3s ease;
+        }
+
+        .cert-category.expanded .cert-toggle {
+            transform: rotate(180deg);
+        }
+
+        .cert-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .cert-category.expanded .cert-list {
+            max-height: 2000px;
+        }
+
+        .cert-item {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .cert-item h5 {
+            font-size: 1rem;
+            color: var(--kam-white);
+            margin-bottom: 0.25rem;
+        }
+
+        .cert-item .cert-date {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .cert-id {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 0.75rem 1.5rem;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .contact-item {
+            opacity: 0;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Email - fly in from left */
+        .contact-item:nth-child(1) {
+            transform: translateX(-80px);
+            transition-delay: 0.2s;
+        }
+
+        .contact-item:nth-child(1).active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Phone - fly in from bottom */
+        .contact-item:nth-child(2) {
+            transform: translateY(80px);
+            transition-delay: 0.5s;
+        }
+
+        .contact-item:nth-child(2).active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Website - fly in from right */
+        .contact-item:nth-child(3) {
+            transform: translateX(80px);
+            transition-delay: 0.8s;
+        }
+
+        .contact-item:nth-child(3).active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 6rem 5% 3rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .contact-form {
+                padding: 2rem;
+            }
+
+            .modal-content {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .about-header {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .about-name {
+                font-size: 2rem;
+            }
+
+            .expertise-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Enhanced scroll reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Stagger animation delays */
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+
+        /* Hidden class for portfolio toggle */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="javascript:void(0)" class="logo" onclick="scrollToTop()">
+                <svg version="1.1" id="kam-logo" width="180" height="60" viewBox="0 0 1353 904" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(0,-108.604)">
+                        <path d="M 0,40.388 H 1014.755 V 718.547 H 0 Z" style="fill:#000000;fill-opacity:0;fill-rule:nonzero;stroke:none" transform="matrix(1.3333333,0,0,-1.3333333,0,1066.6667)"/>
+                        <path d="M 22.876447,-52.627953 H 5.6850406 V 9.53125e-4 H 22.876447 c 16.886719,0 27.9375,-9.925781225 27.9375,-26.121094125 0,-16.289062 -11.050781,-26.507812 -27.9375,-26.507812 z M 14.310041,-7.0420156 V -45.584984 h 8.566406 c 12.410156,0 19.078125,7.417968 19.078125,19.464843 0,11.964844 -6.667969,19.0781254 -19.078125,19.0781254 z M 75.807111,-9.9248281 64.064923,-41.729516 H 54.455548 L 70.885236,-0.67873437 62.400861,19.618141 h 8.941406 l 25.59375,-61.347657 H 87.994611 Z M 133.0532,9.53125e-4 h 8.56641 V -24.608422 c 0,-11.660156 -7.34766,-17.800781 -17.12109,-17.800781 -4.99219,0 -9.6211,2.050781 -12.42188,5.460937 v -4.78125 h -8.625 V 9.53125e-4 h 8.625 V -23.319359 c 0,-7.652344 4.17188,-11.589844 10.53516,-11.589844 6.28125,0 10.4414,3.9375 10.4414,11.589844 z M 149.7202,-21.045922 c 0,12.8671876 8.70703,21.72656263 19.53515,21.72656263 6.97266,0 11.96485,-3.32812503 14.61328,-6.89062503 V 9.53125e-4 h 8.71875 V -41.729516 h -8.71875 v 6.058594 c -2.5664,-3.398437 -7.41796,-6.738281 -14.46093,-6.738281 -10.98047,0 -19.6875,8.484375 -19.6875,21.363281 z m 34.14843,0.140625 c 0,9.011719 -6.1289,14.0859376 -12.64453,14.0859376 -6.43359,0 -12.64453,-5.2148436 -12.64453,-14.2265626 0,-9.011719 6.21094,-13.863281 12.64453,-13.863281 6.51563,0 12.64453,5.074219 12.64453,14.003906 z m 79.2129,20.906250125 h 8.5664 V -24.608422 c 0,-11.660156 -7.42969,-17.800781 -17.1914,-17.800781 -6.0586,0 -11.96485,3.1875 -14.54297,8.261719 -2.8711,-5.460938 -8.40235,-8.261719 -14.98828,-8.261719 -5.00391,0 -9.55079,2.050781 -12.35157,5.460937 v -4.78125 h -8.625 V 9.53125e-4 h 8.625 V -23.319359 c 0,-7.652344 4.17188,-11.589844 10.53516,-11.589844 6.28125,0 10.44141,3.9375 10.44141,11.589844 V 9.53125e-4 h 8.5664 V -23.319359 c 0,-7.652344 4.16016,-11.589844 10.52344,-11.589844 6.28125,0 10.44141,3.9375 10.44141,11.589844 z m 19.55273,0 h 8.625 V -41.729516 h -8.625 z M 287.01707,-47.249047 c 3.03516,0 5.46094,-2.425781 5.46094,-5.53125 0,-3.105469 -2.42578,-5.53125 -5.46094,-5.53125 -3.09375,0 -5.51953,2.425781 -5.51953,5.53125 0,3.105469 2.42578,5.53125 5.51953,5.53125 z m 12.72656,26.34375 c 0,13.1015626 8.48438,21.58593763 20.44922,21.58593763 10.21875,0 16.88672,-5.67187503 19.23047,-13.85156263 h -9.3164 c -1.58204,4.3125001 -4.76954,6.5859376 -9.91407,6.5859376 -6.97265,0 -11.58984,-5.1562496 -11.58984,-14.3203126 0,-9.082031 4.61719,-14.226562 11.58984,-14.226562 5.14453,0 8.48438,2.566406 9.91407,6.585937 h 9.3164 c -2.34375,-8.789062 -9.01172,-13.863281 -19.23047,-13.863281 -11.96484,0 -20.44922,8.484375 -20.44922,21.503906 z m 79.44727,9.246094 c -0.45703,-15.070313 -24.01172,-10.371094 -24.01172,-18.785156 0,-2.800782 2.42578,-4.6875 7.04297,-4.6875 4.69922,0 7.5,2.496093 7.80469,6.128906 h 8.625 c -0.44531,-8.332031 -6.65625,-13.40625 -16.125,-13.40625 -9.84375,0 -16.05469,5.378906 -16.05469,12.046875 0,15.292969 24.23438,10.59375 24.23438,18.773437 0,2.8828129 -2.64844,5.0039066 -7.65235,5.0039066 -4.76953,0 -8.02734,-2.8007812 -8.33203,-6.2109376 h -8.92969 c 0.375,7.5703126 7.41797,13.47656263 17.41407,13.47656263 9.84375,0 15.98437,-5.29687503 15.98437,-12.33984363 z m 0,0" style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.3333333,0,0,1.3333333,147.16213,749.83467)"/>
+                        <path d="m 0,0 h 31.702 v -75.899 c 0.546,0.436 0.858,0.659 1.14,0.914 23.079,20.887 46.154,41.779 69.233,62.667 6.335,5.733 12.671,11.466 19.032,17.169 0.684,0.613 0.76,1.087 0.337,1.895 -3.496,6.678 -6.304,13.62 -7.654,21.071 -1.664,9.183 -1.021,18.05 4.002,26.214 4.348,7.066 10.794,11.627 18.223,14.954 7.52,3.369 15.468,5.178 23.601,6.214 15.664,1.995 31.311,1.339 46.943,-0.467 26.163,-3.023 51.613,-9.251 76.685,-17.129 30.446,-9.567 59.894,-21.624 88.577,-35.58 19.128,-9.308 37.811,-19.429 55.991,-30.473 0.479,-0.291 0.951,-0.593 1.609,-1.004 -4.084,-5.609 -8.126,-11.161 -12.232,-16.799 -2.183,1.293 -4.309,2.563 -6.445,3.817 -37.525,22.032 -76.711,40.511 -117.796,54.918 -22.077,7.742 -44.533,14.124 -67.552,18.408 -13.957,2.598 -28.005,4.428 -42.232,4.674 -11.079,0.191 -22.093,-0.291 -32.772,-3.504 -3.468,-1.044 -6.847,-2.591 -10.022,-4.349 -5.027,-2.783 -7.019,-7.315 -6.523,-13.013 0.404,-4.639 1.807,-8.989 3.637,-13.225 3.18,-7.361 7.36,-14.15 12.188,-20.521 1.705,-2.249 3.21,-4.652 5.114,-6.762 2.011,-2.23 3.853,-4.612 5.836,-6.869 1.951,-2.221 3.956,-4.399 5.994,-6.541 2.07,-2.177 4.19,-4.306 6.323,-6.421 2.1,-2.083 4.221,-4.147 6.377,-6.174 2.188,-2.058 4.41,-4.082 6.653,-6.081 2.208,-1.968 4.441,-3.91 6.698,-5.822 22.487,-19.054 46.725,-35.625 72.045,-50.658 0.354,-0.21 0.727,-0.385 1.483,-0.783 -9.126,20.899 -18.096,41.441 -27.205,62.302 -3.736,-8.539 -7.361,-16.823 -11.131,-25.439 -7.335,5.586 -14.554,11.084 -21.82,16.618 1.846,4.11 3.61,8.034 5.373,11.96 3.975,8.851 7.966,17.694 11.897,26.565 0.41,0.926 0.891,1.206 1.873,1.202 9.212,-0.037 18.425,-0.041 27.637,0.006 1.023,0.005 1.462,-0.36 1.856,-1.24 20.31,-45.293 40.642,-90.576 60.972,-135.86 1.008,-2.245 2.018,-4.489 3.201,-7.12 -3.068,1.43 -5.775,2.668 -8.461,3.949 -29.608,14.133 -58.196,30.07 -85.451,48.35 -21.094,14.147 -41.255,29.492 -59.836,46.844 -10.414,9.726 -20.225,20.013 -28.99,31.267 -0.223,0.287 -0.468,0.556 -0.773,0.917 -18.5,-17.183 -36.925,-34.298 -55.461,-51.515 25.224,-27.3 50.382,-54.528 75.683,-81.911 -0.469,-0.073 -0.753,-0.156 -1.038,-0.156 -11.61,-0.007 -23.219,-0.018 -34.829,0.028 -0.606,0.002 -1.364,0.349 -1.792,0.788 -7.535,7.735 -15.032,15.508 -22.534,23.277 -11.448,11.855 -22.893,23.713 -34.344,35.567 -0.746,0.772 -1.526,1.512 -2.396,2.37 -2.827,-2.53 -5.651,-5.056 -8.472,-7.585 -5.804,-5.201 -11.594,-10.419 -17.428,-15.587 -0.746,-0.66 -1.018,-1.321 -1.016,-2.291 0.029,-11.551 0.019,-23.101 0.019,-34.652 v -1.968 H 0 Z" style="fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.3333333,0,0,-1.3333333,154.722,471.9288)"/>
+                        <path d="m 0,0 c -0.493,-2.228 -0.836,-4.503 -1.506,-6.676 -2.893,-9.379 -9.271,-15.795 -17.711,-20.378 -7.474,-4.058 -15.561,-6.248 -23.899,-7.575 -13.722,-2.184 -27.505,-2.089 -41.309,-0.946 -28.355,2.346 -55.859,8.815 -82.974,17.137 -24.882,7.636 -49.08,17.075 -72.816,27.723 -0.995,0.447 -1.37,0.948 -1.369,2.077 0.033,47.565 0.028,95.129 0.028,142.693 0,0.508 0,1.016 0,1.696 h 1.789 c 9.494,0 18.989,-0.027 28.483,0.033 1.234,0.008 1.929,-0.399 2.633,-1.367 14.619,-20.135 29.272,-40.244 43.92,-60.357 0.273,-0.375 0.563,-0.737 0.931,-1.219 0.338,0.412 0.636,0.742 0.896,1.099 14.732,20.221 29.463,40.445 44.186,60.673 0.479,0.659 0.901,1.169 1.883,1.165 9.871,-0.044 19.741,-0.027 29.612,-0.03 0.279,0 0.559,-0.033 0.95,-0.058 V 9.16 h -27.58 v 106.099 c -0.538,-0.627 -0.839,-0.939 -1.097,-1.284 -15.255,-20.312 -30.515,-40.621 -45.735,-60.96 -0.706,-0.943 -1.461,-1.125 -2.555,-1.279 -2.92,-0.41 -4.581,0.815 -6.28,3.163 -14.254,19.699 -28.665,39.286 -43.03,58.906 -0.323,0.441 -0.667,0.867 -1.178,1.528 -0.043,-0.659 -0.092,-1.052 -0.092,-1.445 -0.003,-30.661 0.003,-61.322 -0.029,-91.983 -0.001,-1.074 0.357,-1.537 1.324,-1.934 28.508,-11.721 57.615,-21.586 87.749,-28.264 17.171,-3.806 34.496,-6.576 52.107,-7.164 11.106,-0.372 22.169,0.055 33.022,2.782 4.063,1.021 8.004,2.384 11.615,4.557 6.423,3.864 8.389,8.727 6.755,16.73 -1.63,7.983 -5.301,15.095 -9.549,21.935 -6.843,11.02 -15.059,20.979 -24.196,30.139 -7.058,7.076 -14.501,13.768 -21.748,20.656 -0.394,0.374 -0.796,0.985 -0.798,1.488 -0.047,8.452 -0.031,16.903 -0.026,25.355 10e-4,0.132 0.05,0.263 0.118,0.604 0.473,-0.359 0.866,-0.646 1.246,-0.949 10.918,-8.698 21.438,-17.85 31.33,-27.7 C -32.12,67.416 -20.295,53.906 -11.152,38.256 -6.323,29.992 -2.427,21.342 -0.718,11.838 -0.481,10.521 -0.239,9.205 0,7.888 0,5.259 0,2.629 0,0" style="fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.3333333,0,0,-1.3333333,906.0396,681.9136)"/>
+                        <path d="M 0,0 C 10.123,22.747 20.153,45.284 30.26,67.996 49.25,53.332 69.052,40.125 89.46,27.61 H 87.994 C 73.282,27.61 58.571,27.596 43.86,27.637 42.707,27.641 42.135,27.293 41.663,26.24 37.92,17.902 34.098,9.599 30.353,1.261 29.924,0.307 29.43,-0.031 28.375,-0.026 19.445,0.019 10.515,0 1.584,0 Z" style="fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.3333333,0,0,-1.3333333,365.89493,669.8304)"/>
+                    </g>
+                </svg>
+            </a>
+            <ul class="nav-links">
+                <li><a href="javascript:void(0)" onclick="scrollToSection('services')">Services</a></li>
+                <li><a href="javascript:void(0)" onclick="scrollToSection('portfolio')">Portfolio</a></li>
+                <li><a href="javascript:void(0)" onclick="scrollToSection('contact')">Contact</a></li>
+                <li><a href="javascript:void(0)" id="about-link">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <!-- Video Background - Replace src with your video file -->
+        <!-- <video class="hero-video" autoplay muted loop playsinline>
+            <source src="your-drone-video.mp4" type="video/mp4">
+        </video> -->
+        
+        <!-- Placeholder - Remove this div when you add real video -->
+        <div class="hero-video-placeholder">
+            [Background Video Placeholder]
+        </div>
+        
+        <div class="hero-background"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <div class="hero-subtitle">Technology & Aerial Solutions</div>
+            <h1 class="hero-title">Elevated Perspectives.<br>Elevated Solutions.</h1>
+            <p class="hero-description">
+                Bridging cutting-edge technology consulting with professional aerial videography to deliver 
+                innovative solutions from every angle.
+            </p>
+            <div class="cta-buttons">
+                <a href="javascript:void(0)" onclick="scrollToSection('contact')" class="btn"><span>Get In Touch</span></a>
+                <a href="javascript:void(0)" onclick="scrollToSection('services')" class="btn btn-secondary"><span>Explore Services</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="section-header reveal">
+            <div class="section-subtitle">What We Offer</div>
+            <h2 class="section-title">Comprehensive Solutions</h2>
+            <p class="section-description">
+                From enterprise technology architecture to cinematic aerial perspectives, 
+                KAM Dynamics delivers expertise across multiple domains.
+            </p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card reveal-left stagger-1">
+                <div class="service-icon">
+                    <!-- Camera/Drone Icon SVG -->
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="20" stroke="#FF0000" stroke-width="3" fill="none"/>
+                        <circle cx="50" cy="50" r="12" fill="#FF0000"/>
+                        <path d="M20 40 L30 40 L35 30 L65 30 L70 40 L80 40 L80 70 L20 70 Z" stroke="#FF0000" stroke-width="2.5" fill="none"/>
+                        <line x1="30" y1="20" x2="30" y2="30" stroke="#FF0000" stroke-width="2"/>
+                        <line x1="25" y1="25" x2="35" y2="25" stroke="#FF0000" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Aerial Video Services</h3>
+                <p class="service-description">
+                    Professional drone videography and photography services delivering stunning aerial perspectives 
+                    for real estate, commercial projects, and events. FAA Part 107 certified operations ensure 
+                    safe, compliant, and high-quality results.
+                </p>
+                <ul class="service-features">
+                    <li>4K High-Resolution Capture</li>
+                    <li>Real Estate Marketing</li>
+                    <li>Commercial Applications</li>
+                    <li>Event Coverage</li>
+                    <li>FAA Part 107 Certified</li>
+                </ul>
+            </div>
+            <div class="service-card reveal-right stagger-2">
+                <div class="service-icon">
+                    <!-- Tech/Server Icon SVG -->
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="25" width="60" height="15" stroke="#FF0000" stroke-width="2.5" fill="none"/>
+                        <rect x="20" y="45" width="60" height="15" stroke="#FF0000" stroke-width="2.5" fill="none"/>
+                        <rect x="20" y="65" width="60" height="15" stroke="#FF0000" stroke-width="2.5" fill="none"/>
+                        <circle cx="30" cy="32.5" r="2" fill="#FF0000"/>
+                        <circle cx="37" cy="32.5" r="2" fill="#FF0000"/>
+                        <circle cx="30" cy="52.5" r="2" fill="#FF0000"/>
+                        <circle cx="37" cy="52.5" r="2" fill="#FF0000"/>
+                        <circle cx="30" cy="72.5" r="2" fill="#FF0000"/>
+                        <circle cx="37" cy="72.5" r="2" fill="#FF0000"/>
+                        <line x1="55" y1="32.5" x2="70" y2="32.5" stroke="#FF0000" stroke-width="2"/>
+                        <line x1="55" y1="52.5" x2="70" y2="52.5" stroke="#FF0000" stroke-width="2"/>
+                        <line x1="55" y1="72.5" x2="70" y2="72.5" stroke="#FF0000" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Technology Consulting</h3>
+                <p class="service-description">
+                    Enterprise-grade technology consulting specializing in Red Hat technologies, 
+                    cloud architecture, and software development. Red Hat Certified Architect with 
+                    deep expertise in modern infrastructure and DevOps practices.
+                </p>
+                <ul class="service-features">
+                    <li>OpenShift & Kubernetes Architecture</li>
+                    <li>Red Hat Enterprise Solutions</li>
+                    <li>Software Development & Integration</li>
+                    <li>Cloud Migration & Strategy</li>
+                    <li>DevOps & Automation</li>
+                    <li>Red Hat Certified Architect</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio">
+        <div class="section-header reveal-scale">
+            <div class="section-subtitle">Our Work</div>
+            <h2 class="section-title">Portfolio</h2>
+        </div>
+        <div class="portfolio-placeholder reveal">
+            <h3>Coming Soon</h3>
+            <p>We're currently curating our showcase of projects. Check back soon to see our work in action.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="section-header reveal">
+            <div class="section-subtitle">Let's Connect</div>
+            <h2 class="section-title">Start a Conversation</h2>
+            <p class="section-description">
+                Ready to elevate your project? Reach out to discuss how KAM Dynamics can help.
+            </p>
+        </div>
+        <div class="contact-container">
+            <form class="contact-form reveal-scale stagger-1" id="contact-form" action="https://formsubmit.co/info@kamdynamics.com" method="POST">
+                <!-- Honeypot for spam protection -->
+                <input type="text" name="_honey" style="display:none">
+                <!-- Disable Captcha (set to true if you want captcha) -->
+                <input type="hidden" name="_captcha" value="false">
+                <!-- Success Page -->
+                <input type="hidden" name="_next" value="https://www.kamdynamics.com">
+                <!-- Pre-filled subject -->
+                <input type="hidden" name="_subject" value="New inquiry from KAM Dynamics website">
+                
+                <div class="form-success" id="form-success">
+                    Thank you! Your message has been sent successfully.
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Name <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" placeholder="Your full name" required>
+                    <div class="form-error" id="name-error">Please enter your name</div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                    <div class="form-error" id="email-error">Please enter a valid email address</div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone (Optional)</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(704) 555-0123">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message <span class="required">*</span></label>
+                    <textarea id="message" name="message" placeholder="Hi, I'm interested in learning more about..." required></textarea>
+                    <div class="form-error" id="message-error">Please enter your message</div>
+                </div>
+                <button type="submit" class="btn"><span>Send Message</span></button>
+            </form>
+            <div class="contact-info reveal stagger-2">
+                <div class="contact-item">
+                    <div class="contact-item-icon">📧</div>
+                    <a href="mailto:info@kamdynamics.com">info@kamdynamics.com</a>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-icon">📞</div>
+                    <a href="tel:+17047501753">(704) 750-1753</a>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-icon">🌐</div>
+                    <a href="https://www.kamdynamics.com" target="_blank">kamdynamics.com</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 KAM Dynamics, LLC. All rights reserved.</p>
+    </footer>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <div class="about-header">
+                <div class="about-photo-placeholder">
+                    [Photo Coming Soon]
+                </div>
+                <div class="about-info">
+                    <h2 class="about-name">Khary A. Mendez</h2>
+                    <p class="about-title">Founder & Technology Consultant</p>
+                    <div class="credentials">
+                        <span class="credential-badge">Red Hat Certified Architect</span>
+                        <span class="credential-badge">FAA Part 107 Certified</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="about-section">
+                <h3>About Me</h3>
+                <p>
+                    I'm a technology enthusiast and entrepreneur with a passion for solving complex problems 
+                    through innovative solutions. My journey in technology began with a deep curiosity about 
+                    how systems work and has evolved into a career spanning enterprise software development, 
+                    cloud architecture, and cutting-edge aerial perspectives.
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h3>My Journey</h3>
+                <p>
+                    With years of experience in enterprise technology consulting, I've helped organizations 
+                    modernize their infrastructure and embrace cloud-native solutions. My Red Hat certification 
+                    represents countless hours of mastering complex systems, while my FAA Part 107 certification 
+                    reflects my commitment to excellence in aerial operations. KAM Dynamics was born from the 
+                    desire to bridge these unique skill sets and deliver comprehensive solutions.
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h3>Love of Learning</h3>
+                <p>
+                    Technology never stops evolving, and neither do I. Whether it's mastering the latest 
+                    containerization techniques, exploring new drone technology, or diving into emerging 
+                    software frameworks, I'm constantly expanding my expertise. This commitment to continuous 
+                    learning ensures that every project benefits from the most current knowledge and best practices.
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h3>Areas of Expertise</h3>
+                <div class="expertise-grid">
+                    <div class="expertise-item">
+                        <h4>Cloud Architecture</h4>
+                        <p>OpenShift, Kubernetes, Container Orchestration</p>
+                    </div>
+                    <div class="expertise-item">
+                        <h4>Software Development</h4>
+                        <p>Modern development practices and integration</p>
+                    </div>
+                    <div class="expertise-item">
+                        <h4>Red Hat Technologies</h4>
+                        <p>Enterprise Linux, certified solutions</p>
+                    </div>
+                    <div class="expertise-item">
+                        <h4>Aerial Operations</h4>
+                        <p>Professional drone videography and photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-section">
+                <h3>Industry Certifications</h3>
+                <div class="cert-id">Red Hat Certification ID: 150-047-298</div>
+                
+                <div class="certifications-section">
+                    <!-- Aerial Certifications -->
+                    <div class="cert-category expanded">
+                        <div class="cert-category-header" onclick="toggleCertCategory(this)">
+                            <span class="cert-category-title">Aerial & Drone Certifications</span>
+                            <span class="cert-toggle">▼</span>
+                        </div>
+                        <div class="cert-list">
+                            <div class="cert-item">
+                                <h5>FAA Part 107 Remote Pilot Certificate</h5>
+                                <p class="cert-date">Federal Aviation Administration</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Red Hat Certifications with Highlighted Architects -->
+                    <div class="cert-category expanded">
+                        <div class="cert-category-header" onclick="toggleCertCategory(this)">
+                            <span class="cert-category-title">Red Hat Certifications</span>
+                            <span class="cert-toggle">▼</span>
+                        </div>
+                        <div class="cert-list">
+                            <!-- Highlighted Architect Certifications -->
+                            <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
+                                <h5 style="color: var(--kam-red); font-size: 1.1rem;">🏆 Red Hat Certified OpenShift Architect Level II</h5>
+                                <p class="cert-date">Achieved: November 2024</p>
+                            </div>
+                            <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
+                                <h5 style="color: var(--kam-red); font-size: 1.1rem;">🏆 Red Hat Certified Architect in Enterprise Applications Level II</h5>
+                                <p class="cert-date">Achieved: November 2024</p>
+                            </div>
+                            <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
+                                <h5 style="color: var(--kam-red); font-size: 1.1rem;">🏆 Red Hat Certified Architect in Infrastructure Level III</h5>
+                                <p class="cert-date">Achieved: August 2023</p>
+                            </div>
+                            
+                            <!-- Other Red Hat Certifications -->
+                            <div class="cert-item">
+                                <h5>Red Hat Certified Specialist in OpenShift AI</h5>
+                                <p class="cert-date">Achieved: November 2024</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Red Hat Certified Cloud-native Developer</h5>
+                                <p class="cert-date">Achieved: November 2024</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Red Hat Certified OpenShift Application Developer</h5>
+                                <p class="cert-date">Achieved: October 2024</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Red Hat Certified Specialist in OpenShift Virtualization</h5>
+                                <p class="cert-date">Achieved: August 2024</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Red Hat Certified Specialist in API Management</h5>
+                                <p class="cert-date">Achieved: August 2024</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Red Hat Certified Specialist in MultiCluster Management</h5>
+                                <p class="cert-date">Achieved: September 2023</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Red Hat Certified Specialist in Service Mesh for Resilient Microservices</h5>
+                                <p class="cert-date">Achieved: August 2023</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Red Hat Certified Specialist in Enterprise Application Server Administration</h5>
+                                <p class="cert-date">Achieved: August 2023</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Red Hat Certified Engineer (RHCE)</h5>
+                                <p class="cert-date">Achieved: June 2019</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Red Hat Certified System Administrator (RHCSA)</h5>
+                                <p class="cert-date">Achieved: October 2015</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Professional Certifications -->
+                    <div class="cert-category expanded">
+                        <div class="cert-category-header" onclick="toggleCertCategory(this)">
+                            <span class="cert-category-title">Cloud & Professional Certifications</span>
+                            <span class="cert-toggle">▼</span>
+                        </div>
+                        <div class="cert-list">
+                            <div class="cert-item">
+                                <h5>Certified Kubernetes Administrator (CKA)</h5>
+                                <p class="cert-date">Cloud Native Computing Foundation</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Certified Kubernetes Application Developer (CKAD)</h5>
+                                <p class="cert-date">Cloud Native Computing Foundation</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Certified Kubernetes Security Specialist (CKS)</h5>
+                                <p class="cert-date">Cloud Native Computing Foundation</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>AWS Certified Cloud Practitioner</h5>
+                                <p class="cert-date">Amazon Web Services</p>
+                            </div>
+                            <div class="cert-item">
+                                <h5>Certified Scrum Master</h5>
+                                <p class="cert-date">Scrum Alliance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const SHOW_PORTFOLIO = true; // Set to true to show portfolio section
+        const SCROLL_ANIMATIONS_REVERSE = true; // Set to true to make animations reverse on scroll up
+        // =======================================================
+
+        // Portfolio visibility toggle
+        if (!SHOW_PORTFOLIO) {
+            const portfolioSection = document.getElementById('portfolio');
+            const portfolioNavItem = Array.from(document.querySelectorAll('.nav-links a')).find(a => 
+                a.getAttribute('onclick')?.includes('portfolio')
+            );
+            if (portfolioSection) portfolioSection.classList.add('hidden');
+            if (portfolioNavItem && portfolioNavItem.parentElement) {
+                portfolioNavItem.parentElement.classList.add('hidden');
+            }
+        }
+
+        // Scroll functions
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Enhanced scroll reveal animation - configurable behavior
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .contact-item');
+        const revealOnScroll = () => {
+            const windowHeight = window.innerHeight;
+            revealElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementBottom = element.getBoundingClientRect().bottom;
+                const revealPoint = 150;
+                
+                // Element is in viewport
+                if (elementTop < windowHeight - revealPoint && elementBottom > 0) {
+                    element.classList.add('active');
+                } else if (SCROLL_ANIMATIONS_REVERSE) {
+                    // Only remove 'active' if reverse animations are enabled
+                    element.classList.remove('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Initial check
+
+        // Modal functionality
+        const modal = document.getElementById('about-modal');
+        const aboutLink = document.getElementById('about-link');
+        const modalClose = document.getElementById('modal-close');
+
+        aboutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        modalClose.addEventListener('click', () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Escape key to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Certification category toggle
+        function toggleCertCategory(header) {
+            const category = header.parentElement;
+            category.classList.toggle('expanded');
+        }
+
+        // Form submission handling with validation
+        const contactForm = document.getElementById('contact-form');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const messageInput = document.getElementById('message');
+        
+        // Email validation regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        // Clear error on input
+        [nameInput, emailInput, messageInput].forEach(input => {
+            input.addEventListener('input', () => {
+                const formGroup = input.closest('.form-group');
+                formGroup.classList.remove('error');
+                const errorDiv = formGroup.querySelector('.form-error');
+                if (errorDiv) errorDiv.classList.remove('show');
+            });
+        });
+        
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent default first to do validation
+            let isValid = true;
+            
+            // Reset all errors
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+            document.querySelectorAll('.form-error').forEach(error => {
+                error.classList.remove('show');
+            });
+            
+            // Validate name
+            if (!nameInput.value.trim()) {
+                isValid = false;
+                const formGroup = nameInput.closest('.form-group');
+                formGroup.classList.add('error');
+                document.getElementById('name-error').classList.add('show');
+            }
+            
+            // Validate email
+            if (!emailInput.value.trim()) {
+                isValid = false;
+                const formGroup = emailInput.closest('.form-group');
+                formGroup.classList.add('error');
+                document.getElementById('email-error').textContent = 'Please enter your email address';
+                document.getElementById('email-error').classList.add('show');
+            } else if (!emailRegex.test(emailInput.value.trim())) {
+                isValid = false;
+                const formGroup = emailInput.closest('.form-group');
+                formGroup.classList.add('error');
+                document.getElementById('email-error').textContent = 'Please enter a valid email address';
+                document.getElementById('email-error').classList.add('show');
+            }
+            
+            // Validate message
+            if (!messageInput.value.trim()) {
+                isValid = false;
+                const formGroup = messageInput.closest('.form-group');
+                formGroup.classList.add('error');
+                document.getElementById('message-error').classList.add('show');
+            } else if (messageInput.value.trim().length < 10) {
+                isValid = false;
+                const formGroup = messageInput.closest('.form-group');
+                formGroup.classList.add('error');
+                document.getElementById('message-error').textContent = 'Please enter a message with at least 10 characters';
+                document.getElementById('message-error').classList.add('show');
+            }
+            
+            // If valid, submit the form
+            if (isValid) {
+                contactForm.submit();
+            } else {
+                // Scroll to first error
+                const firstError = document.querySelector('.form-group.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
