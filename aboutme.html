@@ -28,10 +28,18 @@
             background: transparent;
             color: var(--kam-white);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         body {
             padding: 0;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+
+        body::-webkit-scrollbar {
+            display: none; /* Chrome/Safari/Opera */
         }
 
         .about-header {
@@ -137,38 +145,26 @@
             margin-top: 2rem;
         }
 
-        .cert-id-section {
-            margin-bottom: 2rem;
-        }
-
         .cert-id {
-            background: rgba(255, 0, 0, 0.1);
-            padding: 0.75rem 1.5rem;
-            border: 1px solid rgba(255, 0, 0, 0.2);
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.7);
-            display: inline-block;
-            margin-bottom: 0.75rem;
-        }
-
-        .verify-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.6rem 1.2rem;
             background: rgba(255, 0, 0, 0.1);
+            padding: 0.75rem 1.5rem;
             border: 1px solid rgba(255, 0, 0, 0.3);
-            color: var(--kam-white);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
             text-decoration: none;
-            font-size: 0.9rem;
             transition: all 0.3s ease;
-            margin-top: 0.5rem;
+            cursor: pointer;
         }
 
-        .verify-badge:hover {
+        .cert-id:hover {
             background: rgba(255, 0, 0, 0.2);
             border-color: var(--kam-red);
             transform: translateX(5px);
+            color: var(--kam-white);
         }
 
         .verify-icon {
@@ -248,7 +244,7 @@
 
         .cert-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
         }
 
@@ -263,7 +259,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
             position: relative;
         }
 
@@ -287,13 +282,7 @@
             width: auto;
             max-width: 120px;
             margin-bottom: 1rem;
-            filter: grayscale(100%) brightness(1.5);
-            transition: filter 0.3s ease;
             object-fit: contain;
-        }
-
-        .cert-card:hover .cert-logo {
-            filter: grayscale(0%) brightness(1);
         }
 
         .cert-logo-placeholder {
@@ -315,11 +304,15 @@
             color: var(--kam-white);
             margin-bottom: 0.5rem;
             line-height: 1.4;
+            width: 100%;
+            text-align: left;
         }
 
         .cert-info {
             font-size: 0.85rem;
             color: rgba(255, 255, 255, 0.5);
+            width: 100%;
+            text-align: left;
         }
 
         /* Featured/Architect Cards */
@@ -361,6 +354,12 @@
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            .cert-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
         @media (max-width: 900px) {
             .cert-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -469,18 +468,14 @@
 
     <div class="about-section">
         <h3>Industry Certifications</h3>
-        <div class="cert-id-section">
-            <div class="cert-id">Red Hat Certification ID: 150-047-298</div>
-            <br>
-            <a href="https://rhtapps.redhat.com/verify/?certId=150-047-298" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               class="verify-badge">
-                <span class="verify-icon">✓</span>
-                Verify Credentials
-                <span class="external-icon">↗</span>
-            </a>
-        </div>
+        <a href="https://rhtapps.redhat.com/verify/?certId=150-047-298" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           class="cert-id">
+            <span class="verify-icon">✓</span>
+            Red Hat Certification ID: 150-047-298
+            <span class="external-icon">↗</span>
+        </a>
 
         <div class="certifications-section">
             <!-- ============================================
@@ -643,8 +638,8 @@
         // CONFIGURATION FLAGS
         // ============================================
         
-        // Set to false to hide the stats counter completely
-        const ENABLE_STATS_COUNTER = true;
+        // Set to true to show the stats counter
+        const ENABLE_STATS_COUNTER = false;
         
         // ============================================
         // PARALLAX SCROLL CONFIGURATION
@@ -707,8 +702,8 @@
                         entry.target.classList.add('visible');
                         animateCounter('total-certs', total);
                         animateCounter('architect-certs', architect);
-                        // Display as "25+" instead of exact number
-                        document.getElementById('years-active').textContent = years + '+';
+                        // Display as "25+" 
+                        document.getElementById('years-active').textContent = '25+';
                         observer.unobserve(entry.target);
                     }
                 });
