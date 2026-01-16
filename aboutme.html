@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - KAM Dynamics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --kam-red: #FF0000;
+            --kam-black: #0a0a0a;
+            --kam-white: #ffffff;
+            --kam-gray: #1a1a1a;
+            --kam-light-gray: #333333;
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: 'Work Sans', sans-serif;
+            background: transparent;
+            color: var(--kam-white);
+            line-height: 1.6;
+        }
+
+        body {
+            padding: 0;
+        }
+
+        .about-header {
+            margin-bottom: 3rem;
+            display: flex;
+            gap: 3rem;
+            align-items: flex-start;
+        }
+
+        .about-photo-placeholder {
+            flex-shrink: 0;
+            width: 200px;
+            height: 200px;
+            background: var(--kam-black);
+            border: 3px solid var(--kam-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .about-info {
+            flex: 1;
+        }
+
+        .about-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: var(--kam-red);
+        }
+
+        .about-title {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .credentials {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .credential-badge {
+            background: var(--kam-black);
+            border: 1px solid var(--kam-red);
+            padding: 0.75rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--kam-red);
+            letter-spacing: 0.5px;
+        }
+
+        .about-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .about-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--kam-white);
+        }
+
+        .about-section p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .expertise-item {
+            background: var(--kam-black);
+            padding: 1.5rem;
+            border-left: 3px solid var(--kam-red);
+        }
+
+        .expertise-item h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--kam-white);
+        }
+
+        .expertise-item p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .certifications-section {
+            margin-top: 3rem;
+        }
+
+        .cert-category {
+            background: var(--kam-black);
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .cert-category-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition-smooth);
+        }
+
+        .cert-category-header:hover {
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .cert-category-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--kam-red);
+        }
+
+        .cert-toggle {
+            font-size: 1.5rem;
+            color: var(--kam-red);
+            transition: transform 0.3s ease;
+        }
+
+        .cert-category.expanded .cert-toggle {
+            transform: rotate(180deg);
+        }
+
+        .cert-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .cert-category.expanded .cert-list {
+            max-height: 2000px;
+        }
+
+        .cert-item {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .cert-item h5 {
+            font-size: 1rem;
+            color: var(--kam-white);
+            margin-bottom: 0.25rem;
+        }
+
+        .cert-item .cert-date {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .cert-id {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 0.75rem 1.5rem;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .about-header {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .about-name {
+                font-size: 2rem;
+            }
+
+            .expertise-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="about-header">
+        <div class="about-photo-placeholder">
+            [Photo Coming Soon]
+        </div>
+        <div class="about-info">
+            <h2 class="about-name">Khary A. Mendez</h2>
+            <p class="about-title">Founder & Technology Consultant</p>
+            <div class="credentials">
+                <span class="credential-badge">Red Hat Certified Architect</span>
+                <span class="credential-badge">FAA Part 107 Certified</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-section">
+        <h3>About Me</h3>
+        <p>
+            I'm a technology enthusiast and entrepreneur with a passion for solving complex problems
+            through innovative solutions. My journey in technology began with a deep curiosity about
+            how systems work and has evolved into a career spanning enterprise software development,
+            cloud architecture, and cutting-edge aerial perspectives.
+        </p>
+    </div>
+
+    <div class="about-section">
+        <h3>My Journey</h3>
+        <p>
+            With years of experience in enterprise technology consulting, I've helped organizations
+            modernize their infrastructure and embrace cloud-native solutions. My Red Hat certification
+            represents countless hours of mastering complex systems, while my FAA Part 107 certification
+            reflects my commitment to excellence in aerial operations. KAM Dynamics was born from the
+            desire to bridge these unique skill sets and deliver comprehensive solutions.
+        </p>
+    </div>
+
+    <div class="about-section">
+        <h3>Love of Learning</h3>
+        <p>
+            Technology never stops evolving, and neither do I. Whether it's mastering the latest
+            containerization techniques, exploring new drone technology, or diving into emerging
+            software frameworks, I'm constantly expanding my expertise. This commitment to continuous
+            learning ensures that every project benefits from the most current knowledge and best practices.
+        </p>
+    </div>
+
+    <div class="about-section">
+        <h3>Areas of Expertise</h3>
+        <div class="expertise-grid">
+            <div class="expertise-item">
+                <h4>Cloud Architecture</h4>
+                <p>OpenShift, Kubernetes, Container Orchestration</p>
+            </div>
+            <div class="expertise-item">
+                <h4>Software Development</h4>
+                <p>Modern development practices and integration</p>
+            </div>
+            <div class="expertise-item">
+                <h4>Red Hat Technologies</h4>
+                <p>Enterprise Linux, certified solutions</p>
+            </div>
+            <div class="expertise-item">
+                <h4>Aerial Operations</h4>
+                <p>Professional drone videography and photography</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-section">
+        <h3>Industry Certifications</h3>
+        <div class="cert-id">Red Hat Certification ID: 150-047-298</div>
+
+        <div class="certifications-section">
+            <!-- Aerial Certifications -->
+            <div class="cert-category expanded">
+                <div class="cert-category-header" onclick="toggleCertCategory(this)">
+                    <span class="cert-category-title">Aerial & Drone Certifications</span>
+                    <span class="cert-toggle">&#9660;</span>
+                </div>
+                <div class="cert-list">
+                    <div class="cert-item">
+                        <h5>FAA Part 107 Remote Pilot Certificate</h5>
+                        <p class="cert-date">Federal Aviation Administration</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Red Hat Certifications with Highlighted Architects -->
+            <div class="cert-category expanded">
+                <div class="cert-category-header" onclick="toggleCertCategory(this)">
+                    <span class="cert-category-title">Red Hat Certifications</span>
+                    <span class="cert-toggle">&#9660;</span>
+                </div>
+                <div class="cert-list">
+                    <!-- Highlighted Architect Certifications -->
+                    <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
+                        <h5 style="color: var(--kam-red); font-size: 1.1rem;">&#127942; Red Hat Certified OpenShift Architect Level II</h5>
+                        <p class="cert-date">Achieved: November 2024</p>
+                    </div>
+                    <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
+                        <h5 style="color: var(--kam-red); font-size: 1.1rem;">&#127942; Red Hat Certified Architect in Enterprise Applications Level II</h5>
+                        <p class="cert-date">Achieved: November 2024</p>
+                    </div>
+                    <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
+                        <h5 style="color: var(--kam-red); font-size: 1.1rem;">&#127942; Red Hat Certified Architect in Infrastructure Level III</h5>
+                        <p class="cert-date">Achieved: August 2023</p>
+                    </div>
+
+                    <!-- Other Red Hat Certifications -->
+                    <div class="cert-item">
+                        <h5>Red Hat Certified Specialist in OpenShift AI</h5>
+                        <p class="cert-date">Achieved: November 2024</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Red Hat Certified Cloud-native Developer</h5>
+                        <p class="cert-date">Achieved: November 2024</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Red Hat Certified OpenShift Application Developer</h5>
+                        <p class="cert-date">Achieved: October 2024</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Red Hat Certified Specialist in OpenShift Virtualization</h5>
+                        <p class="cert-date">Achieved: August 2024</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Red Hat Certified Specialist in API Management</h5>
+                        <p class="cert-date">Achieved: August 2024</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Red Hat Certified Specialist in MultiCluster Management</h5>
+                        <p class="cert-date">Achieved: September 2023</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Red Hat Certified Specialist in Service Mesh for Resilient Microservices</h5>
+                        <p class="cert-date">Achieved: August 2023</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Red Hat Certified Specialist in Enterprise Application Server Administration</h5>
+                        <p class="cert-date">Achieved: August 2023</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Red Hat Certified Engineer (RHCE)</h5>
+                        <p class="cert-date">Achieved: June 2019</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Red Hat Certified System Administrator (RHCSA)</h5>
+                        <p class="cert-date">Achieved: October 2015</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Professional Certifications -->
+            <div class="cert-category expanded">
+                <div class="cert-category-header" onclick="toggleCertCategory(this)">
+                    <span class="cert-category-title">Cloud & Professional Certifications</span>
+                    <span class="cert-toggle">&#9660;</span>
+                </div>
+                <div class="cert-list">
+                    <div class="cert-item">
+                        <h5>Certified Kubernetes Administrator (CKA)</h5>
+                        <p class="cert-date">Cloud Native Computing Foundation</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Certified Kubernetes Application Developer (CKAD)</h5>
+                        <p class="cert-date">Cloud Native Computing Foundation</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Certified Kubernetes Security Specialist (CKS)</h5>
+                        <p class="cert-date">Cloud Native Computing Foundation</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>AWS Certified Cloud Practitioner</h5>
+                        <p class="cert-date">Amazon Web Services</p>
+                    </div>
+                    <div class="cert-item">
+                        <h5>Certified Scrum Master</h5>
+                        <p class="cert-date">Scrum Alliance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Certification category toggle
+        function toggleCertCategory(header) {
+            const category = header.parentElement;
+            category.classList.toggle('expanded');
+        }
+    </script>
+</body>
+</html>

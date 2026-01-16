@@ -613,7 +613,8 @@
 
         .modal-content {
             background: var(--kam-gray);
-            max-width: 900px;
+            width: 90vw;
+            max-width: 1200px;
             max-height: 90vh;
             overflow-y: auto;
             padding: 4rem;
@@ -648,6 +649,13 @@
             background: var(--kam-white);
             color: var(--kam-red);
             transform: rotate(90deg);
+        }
+
+        #about-iframe {
+            width: 100%;
+            height: 70vh;
+            border: none;
+            background: transparent;
         }
 
         .about-header {
@@ -1175,188 +1183,7 @@
     <div id="about-modal" class="modal">
         <div class="modal-content">
             <button class="modal-close" id="modal-close">&times;</button>
-            <div class="about-header">
-                <div class="about-photo-placeholder">
-                    [Photo Coming Soon]
-                </div>
-                <div class="about-info">
-                    <h2 class="about-name">Khary A. Mendez</h2>
-                    <p class="about-title">Founder & Technology Consultant</p>
-                    <div class="credentials">
-                        <span class="credential-badge">Red Hat Certified Architect</span>
-                        <span class="credential-badge">FAA Part 107 Certified</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="about-section">
-                <h3>About Me</h3>
-                <p>
-                    I'm a technology enthusiast and entrepreneur with a passion for solving complex problems 
-                    through innovative solutions. My journey in technology began with a deep curiosity about 
-                    how systems work and has evolved into a career spanning enterprise software development, 
-                    cloud architecture, and cutting-edge aerial perspectives.
-                </p>
-            </div>
-
-            <div class="about-section">
-                <h3>My Journey</h3>
-                <p>
-                    With years of experience in enterprise technology consulting, I've helped organizations 
-                    modernize their infrastructure and embrace cloud-native solutions. My Red Hat certification 
-                    represents countless hours of mastering complex systems, while my FAA Part 107 certification 
-                    reflects my commitment to excellence in aerial operations. KAM Dynamics was born from the 
-                    desire to bridge these unique skill sets and deliver comprehensive solutions.
-                </p>
-            </div>
-
-            <div class="about-section">
-                <h3>Love of Learning</h3>
-                <p>
-                    Technology never stops evolving, and neither do I. Whether it's mastering the latest 
-                    containerization techniques, exploring new drone technology, or diving into emerging 
-                    software frameworks, I'm constantly expanding my expertise. This commitment to continuous 
-                    learning ensures that every project benefits from the most current knowledge and best practices.
-                </p>
-            </div>
-
-            <div class="about-section">
-                <h3>Areas of Expertise</h3>
-                <div class="expertise-grid">
-                    <div class="expertise-item">
-                        <h4>Cloud Architecture</h4>
-                        <p>OpenShift, Kubernetes, Container Orchestration</p>
-                    </div>
-                    <div class="expertise-item">
-                        <h4>Software Development</h4>
-                        <p>Modern development practices and integration</p>
-                    </div>
-                    <div class="expertise-item">
-                        <h4>Red Hat Technologies</h4>
-                        <p>Enterprise Linux, certified solutions</p>
-                    </div>
-                    <div class="expertise-item">
-                        <h4>Aerial Operations</h4>
-                        <p>Professional drone videography and photography</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="about-section">
-                <h3>Industry Certifications</h3>
-                <div class="cert-id">Red Hat Certification ID: 150-047-298</div>
-                
-                <div class="certifications-section">
-                    <!-- Aerial Certifications -->
-                    <div class="cert-category expanded">
-                        <div class="cert-category-header" onclick="toggleCertCategory(this)">
-                            <span class="cert-category-title">Aerial & Drone Certifications</span>
-                            <span class="cert-toggle">▼</span>
-                        </div>
-                        <div class="cert-list">
-                            <div class="cert-item">
-                                <h5>FAA Part 107 Remote Pilot Certificate</h5>
-                                <p class="cert-date">Federal Aviation Administration</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Red Hat Certifications with Highlighted Architects -->
-                    <div class="cert-category expanded">
-                        <div class="cert-category-header" onclick="toggleCertCategory(this)">
-                            <span class="cert-category-title">Red Hat Certifications</span>
-                            <span class="cert-toggle">▼</span>
-                        </div>
-                        <div class="cert-list">
-                            <!-- Highlighted Architect Certifications -->
-                            <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
-                                <h5 style="color: var(--kam-red); font-size: 1.1rem;">🏆 Red Hat Certified OpenShift Architect Level II</h5>
-                                <p class="cert-date">Achieved: November 2024</p>
-                            </div>
-                            <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
-                                <h5 style="color: var(--kam-red); font-size: 1.1rem;">🏆 Red Hat Certified Architect in Enterprise Applications Level II</h5>
-                                <p class="cert-date">Achieved: November 2024</p>
-                            </div>
-                            <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
-                                <h5 style="color: var(--kam-red); font-size: 1.1rem;">🏆 Red Hat Certified Architect in Infrastructure Level III</h5>
-                                <p class="cert-date">Achieved: August 2023</p>
-                            </div>
-                            
-                            <!-- Other Red Hat Certifications -->
-                            <div class="cert-item">
-                                <h5>Red Hat Certified Specialist in OpenShift AI</h5>
-                                <p class="cert-date">Achieved: November 2024</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Red Hat Certified Cloud-native Developer</h5>
-                                <p class="cert-date">Achieved: November 2024</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Red Hat Certified OpenShift Application Developer</h5>
-                                <p class="cert-date">Achieved: October 2024</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Red Hat Certified Specialist in OpenShift Virtualization</h5>
-                                <p class="cert-date">Achieved: August 2024</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Red Hat Certified Specialist in API Management</h5>
-                                <p class="cert-date">Achieved: August 2024</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Red Hat Certified Specialist in MultiCluster Management</h5>
-                                <p class="cert-date">Achieved: September 2023</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Red Hat Certified Specialist in Service Mesh for Resilient Microservices</h5>
-                                <p class="cert-date">Achieved: August 2023</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Red Hat Certified Specialist in Enterprise Application Server Administration</h5>
-                                <p class="cert-date">Achieved: August 2023</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Red Hat Certified Engineer (RHCE)</h5>
-                                <p class="cert-date">Achieved: June 2019</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Red Hat Certified System Administrator (RHCSA)</h5>
-                                <p class="cert-date">Achieved: October 2015</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Other Professional Certifications -->
-                    <div class="cert-category expanded">
-                        <div class="cert-category-header" onclick="toggleCertCategory(this)">
-                            <span class="cert-category-title">Cloud & Professional Certifications</span>
-                            <span class="cert-toggle">▼</span>
-                        </div>
-                        <div class="cert-list">
-                            <div class="cert-item">
-                                <h5>Certified Kubernetes Administrator (CKA)</h5>
-                                <p class="cert-date">Cloud Native Computing Foundation</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Certified Kubernetes Application Developer (CKAD)</h5>
-                                <p class="cert-date">Cloud Native Computing Foundation</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Certified Kubernetes Security Specialist (CKS)</h5>
-                                <p class="cert-date">Cloud Native Computing Foundation</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>AWS Certified Cloud Practitioner</h5>
-                                <p class="cert-date">Amazon Web Services</p>
-                            </div>
-                            <div class="cert-item">
-                                <h5>Certified Scrum Master</h5>
-                                <p class="cert-date">Scrum Alliance</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <iframe id="about-iframe" src="aboutme.html" title="About"></iframe>
         </div>
     </div>
 
@@ -1424,40 +1251,38 @@
 
         // Modal functionality
         const modal = document.getElementById('about-modal');
-        const aboutLink = document.getElementById('about-link');
         const modalClose = document.getElementById('modal-close');
+        const aboutLink = document.getElementById('about-link');
 
+        // Function to close modal
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // About link click handler
         aboutLink.addEventListener('click', (e) => {
             e.preventDefault();
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
 
-        modalClose.addEventListener('click', () => {
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        });
+        // Close button handler
+        modalClose.addEventListener('click', closeModal);
 
+        // Click outside modal to close
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
+                closeModal();
             }
         });
 
         // Escape key to close modal
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal.classList.contains('active')) {
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
+                closeModal();
             }
         });
-
-        // Certification category toggle
-        function toggleCertCategory(header) {
-            const category = header.parentElement;
-            category.classList.toggle('expanded');
-        }
 
         // Form submission handling with validation
         const contactForm = document.getElementById('contact-form');
