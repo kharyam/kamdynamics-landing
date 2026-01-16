@@ -134,78 +134,243 @@
         }
 
         .certifications-section {
-            margin-top: 3rem;
+            margin-top: 2rem;
         }
 
-        .cert-category {
-            background: var(--kam-black);
-            margin-bottom: 1rem;
-            border: 1px solid rgba(255, 0, 0, 0.2);
-            overflow: hidden;
-        }
-
-        .cert-category-header {
-            padding: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: var(--transition-smooth);
-        }
-
-        .cert-category-header:hover {
-            background: rgba(255, 0, 0, 0.05);
-        }
-
-        .cert-category-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--kam-red);
-        }
-
-        .cert-toggle {
-            font-size: 1.5rem;
-            color: var(--kam-red);
-            transition: transform 0.3s ease;
-        }
-
-        .cert-category.expanded .cert-toggle {
-            transform: rotate(180deg);
-        }
-
-        .cert-list {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-        }
-
-        .cert-category.expanded .cert-list {
-            max-height: 2000px;
-        }
-
-        .cert-item {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid rgba(255, 0, 0, 0.1);
-        }
-
-        .cert-item h5 {
-            font-size: 1rem;
-            color: var(--kam-white);
-            margin-bottom: 0.25rem;
-        }
-
-        .cert-item .cert-date {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.5);
+        .cert-id-section {
+            margin-bottom: 2rem;
         }
 
         .cert-id {
             background: rgba(255, 0, 0, 0.1);
             padding: 0.75rem 1.5rem;
-            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.2);
             font-size: 0.85rem;
             color: rgba(255, 255, 255, 0.7);
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .verify-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: var(--kam-white);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .verify-badge:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: var(--kam-red);
+            transform: translateX(5px);
+        }
+
+        .verify-icon {
+            color: var(--kam-red);
+            font-weight: bold;
+        }
+
+        .external-icon {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+        }
+
+        /* Stats Counter Styles */
+        .cert-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding: 2rem;
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-left: 3px solid var(--kam-red);
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .cert-stats.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .cert-stats.hidden {
+            display: none;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--kam-red);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Skeleton Loading States */
+        .cert-logo {
+            position: relative;
+        }
+
+        .cert-logo:not(.loaded) {
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.05) 25%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0.05) 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .cert-card {
+            background: var(--kam-black);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-left: 3px solid var(--kam-red);
+            padding: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .cert-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .cert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2);
+            border-color: var(--kam-red);
+        }
+
+        .cert-card.visible:hover {
+            transform: translateY(-5px);
+        }
+
+        .cert-logo {
+            height: 50px;
+            width: auto;
+            max-width: 120px;
             margin-bottom: 1rem;
+            filter: grayscale(100%) brightness(1.5);
+            transition: filter 0.3s ease;
+            object-fit: contain;
+        }
+
+        .cert-card:hover .cert-logo {
+            filter: grayscale(0%) brightness(1);
+        }
+
+        .cert-logo-placeholder {
+            height: 50px;
+            width: 80px;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .cert-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--kam-white);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .cert-info {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Featured/Architect Cards */
+        .cert-card.cert-featured {
+            border-left: 4px solid var(--kam-red);
+            background: linear-gradient(135deg, var(--kam-black) 0%, rgba(255, 0, 0, 0.08) 100%);
+        }
+
+        .cert-card.cert-featured .cert-name {
+            color: var(--kam-red);
+        }
+
+        .cert-badge {
+            position: absolute;
+            top: -8px;
+            right: 10px;
+            background: var(--kam-red);
+            color: var(--kam-white);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Category Headers */
+        .cert-category-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: var(--kam-red);
+            margin-bottom: 1.5rem;
+            margin-top: 2.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .cert-category-label:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .cert-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cert-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Responsive */
@@ -221,6 +386,15 @@
 
             .expertise-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .cert-stats {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -295,125 +469,347 @@
 
     <div class="about-section">
         <h3>Industry Certifications</h3>
-        <div class="cert-id">Red Hat Certification ID: 150-047-298</div>
+        <div class="cert-id-section">
+            <div class="cert-id">Red Hat Certification ID: 150-047-298</div>
+            <br>
+            <a href="https://rhtapps.redhat.com/verify/?certId=150-047-298" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="verify-badge">
+                <span class="verify-icon">✓</span>
+                Verify Credentials
+                <span class="external-icon">↗</span>
+            </a>
+        </div>
 
         <div class="certifications-section">
-            <!-- Aerial Certifications -->
-            <div class="cert-category expanded">
-                <div class="cert-category-header" onclick="toggleCertCategory(this)">
-                    <span class="cert-category-title">Aerial & Drone Certifications</span>
-                    <span class="cert-toggle">&#9660;</span>
+            <!-- ============================================
+                 STATS COUNTER CONFIGURATION
+                 ============================================
+                 Set ENABLE_STATS_COUNTER in JavaScript below
+                 to control display (true/false)
+                 Counts are calculated automatically
+                 ============================================ -->
+            <div class="cert-stats" id="cert-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-certs">0</div>
+                    <div class="stat-label">Total Certifications</div>
                 </div>
-                <div class="cert-list">
-                    <div class="cert-item">
-                        <h5>FAA Part 107 Remote Pilot Certificate</h5>
-                        <p class="cert-date">Federal Aviation Administration</p>
-                    </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="architect-certs">0</div>
+                    <div class="stat-label">Architect Level</div>
                 </div>
-            </div>
-
-            <!-- Red Hat Certifications with Highlighted Architects -->
-            <div class="cert-category expanded">
-                <div class="cert-category-header" onclick="toggleCertCategory(this)">
-                    <span class="cert-category-title">Red Hat Certifications</span>
-                    <span class="cert-toggle">&#9660;</span>
-                </div>
-                <div class="cert-list">
-                    <!-- Highlighted Architect Certifications -->
-                    <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
-                        <h5 style="color: var(--kam-red); font-size: 1.1rem;">&#127942; Red Hat Certified OpenShift Architect Level II</h5>
-                        <p class="cert-date">Achieved: November 2024</p>
-                    </div>
-                    <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
-                        <h5 style="color: var(--kam-red); font-size: 1.1rem;">&#127942; Red Hat Certified Architect in Enterprise Applications Level II</h5>
-                        <p class="cert-date">Achieved: November 2024</p>
-                    </div>
-                    <div class="cert-item" style="background: rgba(255, 0, 0, 0.1); border-left: 3px solid var(--kam-red);">
-                        <h5 style="color: var(--kam-red); font-size: 1.1rem;">&#127942; Red Hat Certified Architect in Infrastructure Level III</h5>
-                        <p class="cert-date">Achieved: August 2023</p>
-                    </div>
-
-                    <!-- Other Red Hat Certifications -->
-                    <div class="cert-item">
-                        <h5>Red Hat Certified Specialist in OpenShift AI</h5>
-                        <p class="cert-date">Achieved: November 2024</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Red Hat Certified Cloud-native Developer</h5>
-                        <p class="cert-date">Achieved: November 2024</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Red Hat Certified OpenShift Application Developer</h5>
-                        <p class="cert-date">Achieved: October 2024</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Red Hat Certified Specialist in OpenShift Virtualization</h5>
-                        <p class="cert-date">Achieved: August 2024</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Red Hat Certified Specialist in API Management</h5>
-                        <p class="cert-date">Achieved: August 2024</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Red Hat Certified Specialist in MultiCluster Management</h5>
-                        <p class="cert-date">Achieved: September 2023</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Red Hat Certified Specialist in Service Mesh for Resilient Microservices</h5>
-                        <p class="cert-date">Achieved: August 2023</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Red Hat Certified Specialist in Enterprise Application Server Administration</h5>
-                        <p class="cert-date">Achieved: August 2023</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Red Hat Certified Engineer (RHCE)</h5>
-                        <p class="cert-date">Achieved: June 2019</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Red Hat Certified System Administrator (RHCSA)</h5>
-                        <p class="cert-date">Achieved: October 2015</p>
-                    </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="years-active">0</div>
+                    <div class="stat-label">Years Experience</div>
                 </div>
             </div>
 
-            <!-- Other Professional Certifications -->
-            <div class="cert-category expanded">
-                <div class="cert-category-header" onclick="toggleCertCategory(this)">
-                    <span class="cert-category-title">Cloud & Professional Certifications</span>
-                    <span class="cert-toggle">&#9660;</span>
+            <!-- ============================================
+                 LOGO REPLACEMENT INSTRUCTIONS
+                 ============================================
+                 To replace any logo with your own:
+                 
+                 1. Save your new logo as SVG or PNG
+                 2. Name it the same (e.g., redhat-logo.svg)
+                 3. Place in /images/ directory (overwrites old)
+                 4. Refresh page - new logo appears!
+                 
+                 Recommended: SVG, 120px width, transparent
+                 ============================================ -->
+
+            <!-- Aerial & Drone Certifications - FIRST for drone customers -->
+            <h4 class="cert-category-label">Aerial & Drone Certifications</h4>
+            <div class="cert-grid">
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/faa-logo.svg" alt="FAA" class="cert-logo" loading="lazy">
+                    <div class="cert-name">FAA Part 107 Remote Pilot Certificate</div>
+                    <div class="cert-info">Federal Aviation Administration</div>
                 </div>
-                <div class="cert-list">
-                    <div class="cert-item">
-                        <h5>Certified Kubernetes Administrator (CKA)</h5>
-                        <p class="cert-date">Cloud Native Computing Foundation</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Certified Kubernetes Application Developer (CKAD)</h5>
-                        <p class="cert-date">Cloud Native Computing Foundation</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Certified Kubernetes Security Specialist (CKS)</h5>
-                        <p class="cert-date">Cloud Native Computing Foundation</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>AWS Certified Cloud Practitioner</h5>
-                        <p class="cert-date">Amazon Web Services</p>
-                    </div>
-                    <div class="cert-item">
-                        <h5>Certified Scrum Master</h5>
-                        <p class="cert-date">Scrum Alliance</p>
-                    </div>
+            </div>
+
+            <!-- Featured Architect Certifications -->
+            <h4 class="cert-category-label">Architect Certifications</h4>
+            <div class="cert-grid">
+                <div class="cert-card cert-featured" data-parallax="card">
+                    <span class="cert-badge">Architect</span>
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified OpenShift Architect Level II</div>
+                    <div class="cert-info">November 2024</div>
+                </div>
+                <div class="cert-card cert-featured" data-parallax="card">
+                    <span class="cert-badge">Architect</span>
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Architect in Enterprise Applications Level II</div>
+                    <div class="cert-info">November 2024</div>
+                </div>
+                <div class="cert-card cert-featured" data-parallax="card">
+                    <span class="cert-badge">Architect</span>
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Architect in Infrastructure Level III</div>
+                    <div class="cert-info">August 2023</div>
+                </div>
+            </div>
+
+            <!-- Red Hat Specialist Certifications -->
+            <h4 class="cert-category-label">Red Hat Certifications</h4>
+            <div class="cert-grid">
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Specialist in OpenShift AI</div>
+                    <div class="cert-info">November 2024</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Cloud-native Developer</div>
+                    <div class="cert-info">November 2024</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified OpenShift Application Developer</div>
+                    <div class="cert-info">October 2024</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Specialist in OpenShift Virtualization</div>
+                    <div class="cert-info">August 2024</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Specialist in API Management</div>
+                    <div class="cert-info">August 2024</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Specialist in MultiCluster Management</div>
+                    <div class="cert-info">September 2023</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Specialist in Service Mesh</div>
+                    <div class="cert-info">August 2023</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Specialist in Enterprise Application Server Administration</div>
+                    <div class="cert-info">August 2023</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified Engineer (RHCE)</div>
+                    <div class="cert-info">June 2019</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/redhat-logo.svg" alt="Red Hat" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Red Hat Certified System Administrator (RHCSA)</div>
+                    <div class="cert-info">October 2015</div>
+                </div>
+            </div>
+
+            <!-- Cloud & Professional Certifications -->
+            <h4 class="cert-category-label">Cloud & Professional Certifications</h4>
+            <div class="cert-grid">
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/cncf-logo.svg" alt="CNCF" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Certified Kubernetes Administrator (CKA)</div>
+                    <div class="cert-info">Cloud Native Computing Foundation</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/cncf-logo.svg" alt="CNCF" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Certified Kubernetes Application Developer (CKAD)</div>
+                    <div class="cert-info">Cloud Native Computing Foundation</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/cncf-logo.svg" alt="CNCF" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Certified Kubernetes Security Specialist (CKS)</div>
+                    <div class="cert-info">Cloud Native Computing Foundation</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/aws-logo.svg" alt="AWS" class="cert-logo" loading="lazy">
+                    <div class="cert-name">AWS Certified Cloud Practitioner</div>
+                    <div class="cert-info">Amazon Web Services</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <img src="images/scrum-logo.svg" alt="Scrum Alliance" class="cert-logo" loading="lazy">
+                    <div class="cert-name">Certified Scrum Master</div>
+                    <div class="cert-info">Scrum Alliance</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Certification category toggle
-        function toggleCertCategory(header) {
-            const category = header.parentElement;
-            category.classList.toggle('expanded');
+        // ============================================
+        // CONFIGURATION FLAGS
+        // ============================================
+        
+        // Set to false to hide the stats counter completely
+        const ENABLE_STATS_COUNTER = true;
+        
+        // ============================================
+        // PARALLAX SCROLL CONFIGURATION
+        // ============================================
+        // Adjust parallax movement intensity (in pixels)
+        // - 0: No parallax (disabled)
+        // - 5: Subtle movement (recommended)
+        // - 10: Moderate movement
+        // - 15: Strong movement
+        // Change the value below to adjust effect:
+        // ============================================
+        const PARALLAX_INTENSITY = 5;
+        
+        // ============================================
+        // YEARS EXPERIENCE CONFIGURATION
+        // ============================================
+        // Set your professional start year
+        // Display shows "25+" to indicate 25+ years
+        // ============================================
+        const PROFESSIONAL_START_YEAR = 1998;
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Dynamic certification counting (automatic - no editing needed)
+            const totalCerts = document.querySelectorAll('.cert-card').length;
+            const architectCerts = document.querySelectorAll('.cert-card.cert-featured').length;
+            const currentYear = new Date().getFullYear();
+            const yearsExperience = currentYear - PROFESSIONAL_START_YEAR;
+            
+            // 2. Stats counter setup
+            if (ENABLE_STATS_COUNTER) {
+                initStatsCounter(totalCerts, architectCerts, yearsExperience);
+            } else {
+                document.getElementById('cert-stats').classList.add('hidden');
+            }
+            
+            // 3. Parallax setup (desktop only, disabled on mobile)
+            if (PARALLAX_INTENSITY > 0 && window.innerWidth > 1024) {
+                initParallax();
+            }
+            
+            // 4. Certification card scroll animations
+            initCertCardAnimations();
+            
+            // 5. Logo loading with skeleton states
+            initLogoLoading();
+        });
+        
+        // ============================================
+        // STATS COUNTER FUNCTIONS
+        // ============================================
+        
+        function initStatsCounter(total, architect, years) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        animateCounter('total-certs', total);
+                        animateCounter('architect-certs', architect);
+                        // Display as "25+" instead of exact number
+                        document.getElementById('years-active').textContent = years + '+';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            
+            observer.observe(document.getElementById('cert-stats'));
+        }
+        
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const duration = 2000; // 2 seconds
+            const increment = targetValue / (duration / 16); // 60fps
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetValue) {
+                    element.textContent = targetValue;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+        
+        // ============================================
+        // PARALLAX SCROLL FUNCTIONS
+        // ============================================
+        
+        function initParallax() {
+            let ticking = false;
+            
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        handleParallax();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+        }
+        
+        function handleParallax() {
+            const scrolled = window.pageYOffset;
+            const intensity = PARALLAX_INTENSITY / 10;
+            
+            document.querySelectorAll('[data-parallax="card"]').forEach((el, index) => {
+                const offset = scrolled * 0.15 * intensity;
+                el.style.transform = `translateY(${offset}px)`;
+            });
+        }
+        
+        // ============================================
+        // LOGO LOADING WITH SKELETON
+        // ============================================
+        
+        function initLogoLoading() {
+            document.querySelectorAll('.cert-logo').forEach(img => {
+                // Mark as loaded when image loads
+                img.addEventListener('load', function() {
+                    this.classList.add('loaded');
+                });
+                
+                // If already loaded (from cache), mark immediately
+                if (img.complete) {
+                    img.classList.add('loaded');
+                }
+            });
+        }
+        
+        // ============================================
+        // CERTIFICATION CARD SCROLL ANIMATIONS
+        // ============================================
+        
+        function initCertCardAnimations() {
+            const certCards = document.querySelectorAll('.cert-card');
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const card = entry.target;
+                        const grid = card.parentElement;
+                        const siblings = Array.from(grid.querySelectorAll('.cert-card'));
+                        const cardIndex = siblings.indexOf(card);
+                        
+                        // Staggered delay based on position
+                        setTimeout(() => {
+                            card.classList.add('visible');
+                        }, cardIndex * 100);
+                        
+                        observer.unobserve(card);
+                    }
+                });
+            }, observerOptions);
+            
+            certCards.forEach(card => observer.observe(card));
         }
     </script>
 </body>

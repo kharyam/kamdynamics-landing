@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+  <!-- Simple AWS Logo - EASY TO REPLACE -->
+  <!-- Replace this file with your own aws-logo.svg -->
+  <text x="20" y="32" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="#FF9900">AWS</text>
+</svg>
