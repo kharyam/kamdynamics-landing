@@ -1010,26 +1010,18 @@
         .loader-logo {
             width: 600px;
             height: auto;
-            opacity: 0;
-            animation: logoMassiveZoomOut 2s ease-in-out forwards;
+            opacity: 1;
+            animation: logoZoomFadeOut 2s ease-out forwards;
         }
 
-        @keyframes logoMassiveZoomOut {
+        @keyframes logoZoomFadeOut {
             0% {
-                opacity: 0;
-                transform: scale(4);
-            }
-            15% {
                 opacity: 1;
                 transform: scale(4);
-            }
-            85% {
-                opacity: 1;
-                transform: scale(1);
             }
             100% {
                 opacity: 0;
-                transform: scale(0.7);
+                transform: scale(1);
             }
         }
 
@@ -1102,28 +1094,26 @@
             background: var(--kam-red);
             border-radius: 50%;
             opacity: 0;
-            animation: float-particle 8s infinite linear;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+            animation: organic-float infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
         }
 
-        @keyframes float-particle {
-            0% {
-                opacity: 0;
+        @keyframes organic-float {
+            0%, 100% {
                 transform: translate(0, 0);
+                opacity: var(--max-opacity);
             }
-            10% {
-                opacity: 1;
+            25% {
+                transform: translate(var(--drift-x), calc(var(--drift-y) * 0.3));
+                opacity: calc(var(--max-opacity) * 0.7);
             }
             50% {
-                opacity: 1;
-                transform: translate(calc(var(--drift-x) * 0.5), calc(var(--drift-y) * 0.5));
+                transform: translate(calc(var(--drift-x) * 0.5), var(--drift-y));
+                opacity: calc(var(--max-opacity) * 1.2);
             }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--drift-x), var(--drift-y));
-                opacity: 0;
+            75% {
+                transform: translate(calc(var(--drift-x) * -0.4), calc(var(--drift-y) * 0.6));
+                opacity: calc(var(--max-opacity) * 0.8);
             }
         }
 
@@ -1758,8 +1748,8 @@
                     const particle = document.createElement('div');
                     particle.className = 'particle';
                     
-                    // DEBUG: HUGE particles (50px) - easy to see
-                    const size = 50;
+                    // Small subtle particles (4-8px)
+                    const size = 4 + Math.random() * 4;
                     particle.style.width = size + 'px';
                     particle.style.height = size + 'px';
                     
@@ -1768,27 +1758,31 @@
                     particle.style.left = startX + '%';
                     
                     // Random starting vertical position (spread across viewport)
-                    particle.style.top = Math.random() * 120 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
                     
-                    // Random horizontal drift direction (some left, some right)
-                    const driftX = (Math.random() - 0.5) * 200; // -100 to +100 pixels
+                    // Subtle organic drift - small movements
+                    const driftX = (Math.random() - 0.5) * 60; // -30 to +30 pixels (subtle)
                     particle.style.setProperty('--drift-x', driftX + 'px');
                     
-                    // Random vertical distance (vary how far they float)
-                    const driftY = -80 - Math.random() * 40; // -80vh to -120vh
-                    particle.style.setProperty('--drift-y', driftY + 'vh');
+                    // Subtle vertical drift (mostly stays in place with gentle bob)
+                    const driftY = -20 - Math.random() * 30; // -20px to -50px (subtle)
+                    particle.style.setProperty('--drift-y', driftY + 'px');
                     
-                    // DEBUG: Variable animation speeds (6-10 seconds)
-                    const duration = 6 + Math.random() * 4;
+                    // Varying transparency per particle
+                    const maxOpacity = 0.2 + Math.random() * 0.4; // 0.2 to 0.6
+                    particle.style.setProperty('--max-opacity', maxOpacity);
+                    
+                    // Slow organic animation (25-40 seconds) - gentle background movement
+                    const duration = 25 + Math.random() * 15;
                     particle.style.animationDuration = duration + 's';
                     
-                    // Stagger start times
-                    particle.style.animationDelay = (i * 0.4) + 's';
+                    // Random start time
+                    particle.style.animationDelay = -(Math.random() * 40) + 's';
                     
                     container.appendChild(particle);
                 }
                 
-                console.log('Particles created:', count);
+                console.log('Particles created:', count, '- subtle organic mode');
             }
             
             // Create particles on load
