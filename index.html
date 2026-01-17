@@ -126,9 +126,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             opacity: 0.15;
             z-index: 0;
+        }
+
+        /* Mobile viewports: cover hero but show top of video */
+        @media (max-width: 768px) {
+            .hero-video {
+                object-fit: cover;
+                object-position: top center;
+            }
         }
 
         /* Placeholder for video */
@@ -1533,11 +1541,11 @@
     <!-- Hero Section -->
     <section class="hero">
         <!-- Video Background - Replace src with your video file -->
-        <!-- <video class="hero-video" autoplay muted loop playsinline>
-            <source src="your-drone-video.mp4" type="video/mp4">
-        </video> -->
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="videos/house-bg-clip.mp4" type="video/mp4">
+        </video> 
         
-        <!-- Placeholder - Remove this div when you add real video 
+        <!-- Placeholder - Remove this div when you add real video  --/>
         <div class="hero-video-placeholder">
             [Background Video Placeholder]
         </div> -->
