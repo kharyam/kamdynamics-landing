@@ -1012,18 +1012,20 @@
             height: auto;
             opacity: 1;
             animation: logoZoomFadeOut 2s ease-out forwards;
-            display: block;
-            margin: 0 auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
         }
 
         @keyframes logoZoomFadeOut {
             0% {
                 opacity: 1;
-                transform: scale(4);
+                transform: translate(-50%, -50%) scale(4);
             }
             100% {
                 opacity: 0;
-                transform: scale(1);
+                transform: translate(-50%, -50%) scale(1);
             }
         }
 
