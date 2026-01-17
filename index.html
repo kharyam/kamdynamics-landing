@@ -1012,6 +1012,8 @@
             height: auto;
             opacity: 1;
             animation: logoZoomFadeOut 2s ease-out forwards;
+            display: block;
+            margin: 0 auto;
         }
 
         @keyframes logoZoomFadeOut {
@@ -1760,12 +1762,12 @@
                     // Random starting vertical position (spread across viewport)
                     particle.style.top = Math.random() * 100 + '%';
                     
-                    // Subtle organic drift - small movements
-                    const driftX = (Math.random() - 0.5) * 60; // -30 to +30 pixels (subtle)
+                    // Organic drift - more noticeable movement
+                    const driftX = (Math.random() - 0.5) * 120; // -60 to +60 pixels
                     particle.style.setProperty('--drift-x', driftX + 'px');
                     
-                    // Subtle vertical drift (mostly stays in place with gentle bob)
-                    const driftY = -20 - Math.random() * 30; // -20px to -50px (subtle)
+                    // Vertical drift with more range
+                    const driftY = -40 - Math.random() * 60; // -40px to -100px
                     particle.style.setProperty('--drift-y', driftY + 'px');
                     
                     // Varying transparency per particle
