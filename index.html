@@ -1109,15 +1109,20 @@
         @keyframes float-particle {
             0% {
                 opacity: 0;
+                transform: translate(0, 0);
             }
             10% {
                 opacity: 1;
+            }
+            50% {
+                opacity: 1;
+                transform: translate(calc(var(--drift-x) * 0.5), calc(var(--drift-y) * 0.5));
             }
             90% {
                 opacity: 1;
             }
             100% {
-                transform: translateY(-100vh);
+                transform: translate(var(--drift-x), var(--drift-y));
                 opacity: 0;
             }
         }
@@ -1759,16 +1764,26 @@
                     particle.style.height = size + 'px';
                     
                     // Random horizontal position
-                    particle.style.left = Math.random() * 100 + '%';
+                    const startX = Math.random() * 100;
+                    particle.style.left = startX + '%';
                     
-                    // Random starting vertical position (not all at bottom)
+                    // Random starting vertical position (spread across viewport)
                     particle.style.top = Math.random() * 120 + '%';
                     
-                    // DEBUG: Slow animation (8 seconds) - easy to see movement
-                    particle.style.animationDuration = '8s';
+                    // Random horizontal drift direction (some left, some right)
+                    const driftX = (Math.random() - 0.5) * 200; // -100 to +100 pixels
+                    particle.style.setProperty('--drift-x', driftX + 'px');
+                    
+                    // Random vertical distance (vary how far they float)
+                    const driftY = -80 - Math.random() * 40; // -80vh to -120vh
+                    particle.style.setProperty('--drift-y', driftY + 'vh');
+                    
+                    // DEBUG: Variable animation speeds (6-10 seconds)
+                    const duration = 6 + Math.random() * 4;
+                    particle.style.animationDuration = duration + 's';
                     
                     // Stagger start times
-                    particle.style.animationDelay = (i * 0.3) + 's';
+                    particle.style.animationDelay = (i * 0.4) + 's';
                     
                     container.appendChild(particle);
                 }
