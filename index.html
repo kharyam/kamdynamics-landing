@@ -1007,25 +1007,29 @@
             visibility: hidden;
         }
 
-        .loader-logo {
+        .loader-logo-wrapper {
             width: 600px;
-            height: auto;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             opacity: 1;
             animation: logoZoomFadeOut 2s ease-out forwards;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform-origin: center center;
+        }
+
+        .loader-logo {
+            width: 100%;
+            height: auto;
         }
 
         @keyframes logoZoomFadeOut {
             0% {
                 opacity: 1;
-                transform: translate(-50%, -50%) scale(4);
+                transform: scale(4);
             }
             100% {
                 opacity: 0;
-                transform: translate(-50%, -50%) scale(1);
+                transform: scale(1);
             }
         }
 
@@ -1271,7 +1275,9 @@
 <body>
     <!-- Page Loading Animation -->
     <div id="page-loader" class="page-loader">
-        <img src="images/kam-logo.svg" alt="KAM Dynamics" class="loader-logo">
+        <div class="loader-logo-wrapper">
+            <img src="images/kam-logo.svg" alt="KAM Dynamics" class="loader-logo">
+        </div>
     </div>
 
     <!-- Navigation -->
