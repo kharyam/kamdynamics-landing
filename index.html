@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAM Dynamics | Technology & Aerial Solutions</title>
+    <title>KAM Dynamics | Drone & Tech Consulting | Charlotte, NC</title>
+    <meta name="description" content="KAM Dynamics provides technology consulting and professional drone/aerial videography services in Charlotte, NC and surrounding areas.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -226,6 +227,21 @@
             .hero-title {
                 color: var(--kam-white);
             }
+        }
+
+        .hero-location {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.55s;
+        }
+
+        .hero-location span {
+            color: var(--kam-red);
         }
 
         .hero-description {
@@ -877,8 +893,135 @@
             transform: translateX(0);
         }
 
+        /* ============================================
+           MOBILE NAVIGATION
+           ============================================ */
+
+        /* Hamburger Button */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 44px;
+            height: 44px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+
+        .hamburger-line {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--kam-white);
+            margin: 3px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Hamburger animation to X */
+        .hamburger.active .hamburger-line:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active .hamburger-line:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Mobile Navigation Overlay */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .mobile-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Mobile Navigation Panel */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100%;
+            background: var(--kam-gray);
+            border-left: 1px solid rgba(255, 0, 0, 0.3);
+            z-index: 999;
+            transition: right 0.3s ease;
+            padding: 100px 0 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            padding: 0 1.5rem;
+        }
+
+        .mobile-nav-links li {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .mobile-nav.active .mobile-nav-links li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Staggered animation for mobile nav links */
+        .mobile-nav.active .mobile-nav-links li:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-nav.active .mobile-nav-links li:nth-child(2) { transition-delay: 0.15s; }
+        .mobile-nav.active .mobile-nav-links li:nth-child(3) { transition-delay: 0.2s; }
+        .mobile-nav.active .mobile-nav-links li:nth-child(4) { transition-delay: 0.25s; }
+
+        .mobile-nav-links a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--kam-white);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: color 0.3s ease, padding-left 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover {
+            color: var(--kam-red);
+            padding-left: 0.5rem;
+        }
+
+        /* Body scroll lock when mobile nav is open */
+        body.mobile-nav-open {
+            overflow: hidden;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
             .nav-links {
                 display: none;
             }
@@ -1289,9 +1432,16 @@
             .shape {
                 animation: none !important;
             }
-            
+
             .hero-title.typewriter::after {
                 display: none;
+            }
+
+            .hamburger-line,
+            .mobile-nav,
+            .mobile-nav-overlay,
+            .mobile-nav-links li {
+                transition: none !important;
             }
         }
 
@@ -1360,7 +1510,24 @@
                 <li><a href="javascript:void(0)" onclick="scrollToSection('contact')">Contact</a></li>
                 <li><a href="javascript:void(0)" id="about-link">About</a></li>
             </ul>
+            <!-- Hamburger Menu Button -->
+            <button class="hamburger" id="hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
         </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay" aria-hidden="true"></div>
+    <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
+        <ul class="mobile-nav-links">
+            <li><a href="javascript:void(0)" onclick="scrollToSection('services'); closeMobileNav();">Services</a></li>
+            <li class="mobile-portfolio-link"><a href="javascript:void(0)" onclick="scrollToSection('portfolio'); closeMobileNav();">Portfolio</a></li>
+            <li><a href="javascript:void(0)" onclick="scrollToSection('contact'); closeMobileNav();">Contact</a></li>
+            <li><a href="javascript:void(0)" id="mobile-about-link">About</a></li>
+        </ul>
     </nav>
 
     <!-- Hero Section -->
@@ -1384,6 +1551,7 @@
         <div class="hero-content">
             <div class="hero-subtitle">Technology & Aerial Solutions</div>
             <h1 class="hero-title" data-typewriter="Elevated Perspectives.|Elevated Solutions."></h1>
+            <p class="hero-location">Serving <span>Charlotte, NC</span> & Beyond</p>
             <p class="hero-description">
                 Bridging cutting-edge technology consulting with professional aerial videography to deliver 
                 innovative solutions from every angle.
@@ -1702,6 +1870,109 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal.classList.contains('active')) {
                 closeModal();
+            }
+        });
+
+        // ============================================
+        // MOBILE NAVIGATION
+        // ============================================
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobile-nav');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileAboutLink = document.getElementById('mobile-about-link');
+        const mobilePortfolioLink = document.querySelector('.mobile-portfolio-link');
+
+        // Sync portfolio visibility with config
+        if (!SHOW_PORTFOLIO && mobilePortfolioLink) {
+            mobilePortfolioLink.classList.add('hidden');
+        }
+
+        // Open mobile nav
+        function openMobileNav() {
+            hamburger.classList.add('active');
+            hamburger.setAttribute('aria-expanded', 'true');
+            hamburger.setAttribute('aria-label', 'Close navigation menu');
+            mobileNav.classList.add('active');
+            mobileNav.setAttribute('aria-hidden', 'false');
+            mobileNavOverlay.classList.add('active');
+            mobileNavOverlay.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('mobile-nav-open');
+
+            // Focus first link for accessibility
+            const firstLink = mobileNav.querySelector('a');
+            if (firstLink) {
+                setTimeout(() => firstLink.focus(), 100);
+            }
+        }
+
+        // Close mobile nav
+        function closeMobileNav() {
+            hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            hamburger.setAttribute('aria-label', 'Open navigation menu');
+            mobileNav.classList.remove('active');
+            mobileNav.setAttribute('aria-hidden', 'true');
+            mobileNavOverlay.classList.remove('active');
+            mobileNavOverlay.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('mobile-nav-open');
+
+            // Return focus to hamburger
+            hamburger.focus();
+        }
+
+        // Toggle mobile nav
+        function toggleMobileNav() {
+            if (mobileNav.classList.contains('active')) {
+                closeMobileNav();
+            } else {
+                openMobileNav();
+            }
+        }
+
+        // Hamburger click handler
+        hamburger.addEventListener('click', toggleMobileNav);
+
+        // Overlay click handler
+        mobileNavOverlay.addEventListener('click', closeMobileNav);
+
+        // Escape key closes mobile nav
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+                closeMobileNav();
+            }
+        });
+
+        // Mobile About link opens modal
+        mobileAboutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeMobileNav();
+            setTimeout(() => {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }, 300);
+        });
+
+        // Focus trap within mobile nav
+        mobileNav.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                const focusableElements = mobileNav.querySelectorAll('a, button');
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                if (e.shiftKey && document.activeElement === firstElement) {
+                    e.preventDefault();
+                    lastElement.focus();
+                } else if (!e.shiftKey && document.activeElement === lastElement) {
+                    e.preventDefault();
+                    firstElement.focus();
+                }
+            }
+        });
+
+        // Close mobile nav on window resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && mobileNav.classList.contains('active')) {
+                closeMobileNav();
             }
         });
 
