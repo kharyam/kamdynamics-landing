@@ -1028,12 +1028,49 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+            }
+
+            nav {
+                padding: 0.5rem 3%;
+            }
+
+            nav.scrolled {
+                padding: 0.4rem 3%;
+            }
+
+            .nav-container {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .logo {
+                max-width: calc(100% - 60px);
+                overflow: hidden;
+            }
+
+            .logo svg {
+                height: 80px;
+                max-width: 100%;
+            }
+
+            nav.scrolled .logo svg {
+                height: 60px;
+            }
+
             .hamburger {
                 display: flex;
+                flex-shrink: 0;
+                position: relative;
             }
 
             .nav-links {
                 display: none;
+            }
+
+            .mobile-nav {
+                padding-top: 110px;
             }
 
             .services-grid {
