@@ -132,11 +132,16 @@
             z-index: 0;
         }
 
-        /* Mobile viewports: cover hero but show top of video */
+        /* Mobile viewports: fill hero height, crop sides, no zoom */
         @media (max-width: 768px) {
             .hero-video {
-                object-fit: cover;
-                object-position: top center;
+                height: 100%;
+                width: auto;
+                aspect-ratio: 16/9;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                object-fit: fill;
                 opacity: 0.45;
             }
         }
