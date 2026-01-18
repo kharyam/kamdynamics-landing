@@ -1342,10 +1342,10 @@
             top: -100px;
             left: -100px;
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
-            --shape-drift-x: 20px;
-            --shape-drift-y: -15px;
+            --shape-drift-x: 40px;
+            --shape-drift-y: -30px;
             --shape-rotate: 0deg;
-            animation: shape-drift 25s ease-in-out infinite;
+            animation: shape-drift 12s ease-in-out infinite;
         }
 
         .shape-triangle {
@@ -1358,27 +1358,38 @@
             right: -150px;
             opacity: 0.08;
             filter: blur(1px);
-            --shape-drift-x: 18px;
-            --shape-drift-y: -12px;
-            --shape-rotate: 3deg;
-            animation: shape-drift 20s ease-in-out infinite;
+            --shape-drift-x: 36px;
+            --shape-drift-y: -24px;
+            --shape-rotate: 12deg;
+            animation: shape-drift 10s ease-in-out infinite;
             animation-delay: -5s;
         }
 
         .shape-hexagon {
             width: 300px;
             height: 300px;
-            background: rgba(255, 0, 0, 0.15);
-            border: 3px solid var(--kam-red);
+            background: var(--kam-red);
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
             bottom: 100px;
             left: 10%;
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
-            --shape-drift-x: 12px;
-            --shape-drift-y: -18px;
-            --shape-rotate: 2deg;
-            animation: shape-drift 30s ease-in-out infinite;
+            opacity: 0.15;
+            --shape-drift-x: 24px;
+            --shape-drift-y: -36px;
+            --shape-rotate: 10deg;
+            animation: shape-drift 15s ease-in-out infinite;
             animation-delay: -8s;
+        }
+
+        .shape-hexagon::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            background: linear-gradient(rgba(255, 0, 0, 0.08), rgba(255, 0, 0, 0.08)), var(--kam-black);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
         }
 
         .shape-square {
@@ -1389,9 +1400,9 @@
             right: -200px;
             opacity: 0.1;
             box-shadow: 0 0 25px rgba(255, 0, 0, 0.25);
-            --shape-drift-x: 15px;
-            --shape-drift-y: -10px;
-            animation: shape-drift-square 22s ease-in-out infinite;
+            --shape-drift-x: 30px;
+            --shape-drift-y: -20px;
+            animation: shape-drift-square 11s ease-in-out infinite;
             animation-delay: -3s;
         }
 
@@ -1400,14 +1411,14 @@
             height: 350px;
             background: rgba(255, 0, 0, 0.08);
             border-radius: 50%;
-            top: 30%;
-            right: 5%;
+            top: 45%;
+            left: -5%;
             box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
             opacity: 1;
-            --shape-drift-x: 16px;
-            --shape-drift-y: -14px;
+            --shape-drift-x: 32px;
+            --shape-drift-y: -28px;
             --shape-rotate: 0deg;
-            animation: shape-drift 28s ease-in-out infinite;
+            animation: shape-drift 14s ease-in-out infinite;
             animation-delay: -10s;
         }
 
@@ -1418,12 +1429,13 @@
             border-radius: 50%;
             top: 8%;
             right: 18%;
+            background: rgba(255, 0, 0, 0.35);
             box-shadow: 0 0 40px rgba(255, 0, 0, 0.4);
             opacity: 0.15;
-            --shape-drift-x: 14px;
-            --shape-drift-y: -16px;
+            --shape-drift-x: 28px;
+            --shape-drift-y: -32px;
             --shape-rotate: 0deg;
-            animation: shape-drift 24s ease-in-out infinite;
+            animation: shape-drift 12s ease-in-out infinite;
             animation-delay: -7s;
         }
 
@@ -1465,13 +1477,13 @@
                 transform: rotate(45deg) translate(0, var(--parallax-y, 0px));
             }
             25% {
-                transform: rotate(47deg) translate(var(--shape-drift-x, 15px), calc(var(--shape-drift-y, -10px) + var(--parallax-y, 0px)));
+                transform: rotate(55deg) translate(var(--shape-drift-x, 15px), calc(var(--shape-drift-y, -10px) + var(--parallax-y, 0px)));
             }
             50% {
-                transform: rotate(43deg) translate(calc(var(--shape-drift-x, 15px) * -0.5), calc(var(--shape-drift-y, -10px) * 1.5 + var(--parallax-y, 0px)));
+                transform: rotate(38deg) translate(calc(var(--shape-drift-x, 15px) * -0.5), calc(var(--shape-drift-y, -10px) * 1.5 + var(--parallax-y, 0px)));
             }
             75% {
-                transform: rotate(46deg) translate(calc(var(--shape-drift-x, 15px) * 0.7), calc(var(--shape-drift-y, -10px) * 0.4 + var(--parallax-y, 0px)));
+                transform: rotate(52deg) translate(calc(var(--shape-drift-x, 15px) * 0.7), calc(var(--shape-drift-y, -10px) * 0.4 + var(--parallax-y, 0px)));
             }
         }
 
