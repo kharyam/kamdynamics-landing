@@ -18,6 +18,7 @@
             --kam-gray: #1a1a1a;
             --kam-light-gray: #333333;
             --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --easing-bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         * {
@@ -39,17 +40,22 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 1000;
             padding: 0.75rem 5%;
             transition: var(--transition-smooth);
-            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.15);
         }
 
         nav.scrolled {
             padding: 0.5rem 5%;
-            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.1);
+            background: rgba(10, 10, 10, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(255, 0, 0, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.25);
         }
 
         .nav-container {
@@ -64,6 +70,32 @@
             display: flex;
             align-items: center;
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(
+                105deg,
+                transparent 20%,
+                rgba(255, 255, 255, 0.15) 45%,
+                rgba(255, 255, 255, 0.25) 50%,
+                rgba(255, 255, 255, 0.15) 55%,
+                transparent 80%
+            );
+            animation: logo-sweep 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes logo-sweep {
+            0%, 85% { left: -100%; }
+            100% { left: 200%; }
         }
 
         .logo svg {
@@ -96,11 +128,13 @@
             content: '';
             position: absolute;
             bottom: -5px;
-            left: 0;
+            left: 50%;
             width: 0;
             height: 2px;
             background: var(--kam-red);
             transition: var(--transition-smooth);
+            transform: translateX(-50%);
+            box-shadow: 0 0 6px rgba(255, 0, 0, 0.4);
         }
 
         .nav-links a:hover {
@@ -332,6 +366,38 @@
             color: var(--kam-red);
         }
 
+        .hero .btn:first-child {
+            background: var(--kam-red);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+
+        .hero .btn:first-child::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(135deg, #ff0000, #ff4444, #ff0000, #cc0000);
+            background-size: 300% 300%;
+            z-index: -1;
+            animation: gradient-shift 4s ease infinite;
+            filter: blur(4px);
+            opacity: 0.6;
+            transition: opacity 0.4s ease;
+        }
+
+        .hero .btn:first-child:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
         .btn-secondary {
             background: transparent;
             color: var(--kam-red);
@@ -345,10 +411,28 @@
             color: var(--kam-white);
         }
 
+        /* Section Dividers */
+        .services::before,
+        .portfolio::before,
+        .contact::before,
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--kam-red), transparent);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4), 0 0 30px rgba(255, 0, 0, 0.1);
+            z-index: 1;
+        }
+
         /* Services Section */
         .services {
             padding: 8rem 5%;
             position: relative;
+            background: radial-gradient(ellipse at 20% 50%, rgba(255, 0, 0, 0.03) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 80%, rgba(255, 0, 0, 0.02) 0%, transparent 50%);
         }
 
         .section-header {
@@ -370,6 +454,23 @@
             font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 900;
             margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #ff0000 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -moz-background-clip: text;
+            -moz-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        @supports not (background-clip: text) {
+            .section-title {
+                color: var(--kam-white);
+            }
+        }
+
+        .section-subtitle {
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.4), 0 0 40px rgba(255, 0, 0, 0.1);
         }
 
         .section-description {
@@ -393,7 +494,7 @@
             padding: 3rem;
             position: relative;
             overflow: hidden;
-            transition: var(--transition-smooth);
+            transition: all 0.5s var(--easing-bouncy);
         }
 
         .service-card::before {
@@ -415,8 +516,13 @@
 
         .service-card:hover {
             border-color: var(--kam-red);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px rgba(255, 0, 0, 0.2);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(255, 0, 0, 0.25), 0 0 30px rgba(255, 0, 0, 0.1);
+        }
+
+        .services-grid:hover .service-card:not(:hover) {
+            opacity: 0.7;
+            transform: scale(0.98);
         }
 
         /* Icon SVG styles */
@@ -498,6 +604,8 @@
         .contact {
             padding: 8rem 5%;
             position: relative;
+            background: radial-gradient(ellipse at 50% 30%, rgba(255, 0, 0, 0.04) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 70%, rgba(255, 0, 0, 0.02) 0%, transparent 50%);
         }
 
         .contact-container {
@@ -506,10 +614,32 @@
         }
 
         .contact-form {
-            background: var(--kam-gray);
+            background: linear-gradient(135deg, var(--kam-gray) 0%, rgba(255, 0, 0, 0.03) 100%);
             border: 1px solid rgba(255, 0, 0, 0.2);
             padding: 3rem;
             margin-top: 3rem;
+        }
+
+        .contact-form .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-form .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.2) 50%, transparent 80%);
+            transition: left 0.6s ease;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .contact-form .btn:hover::after {
+            left: 200%;
         }
 
         .form-group {
@@ -545,7 +675,13 @@
         .form-group textarea:focus {
             outline: none;
             border-color: var(--kam-red);
-            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.15), 0 0 20px rgba(255, 0, 0, 0.1);
+            animation: focus-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes focus-pulse {
+            0%, 100% { box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.15), 0 0 20px rgba(255, 0, 0, 0.1); }
+            50% { box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.25), 0 0 25px rgba(255, 0, 0, 0.15); }
         }
 
         .form-group textarea {
@@ -593,6 +729,18 @@
 
         .contact-item {
             text-align: center;
+            text-decoration: none;
+            color: var(--kam-white);
+            cursor: pointer;
+            display: block;
+        }
+
+        .contact-item span {
+            transition: var(--transition-smooth);
+        }
+
+        .contact-item:hover span {
+            color: var(--kam-red);
         }
 
         .contact-item-icon {
@@ -605,29 +753,51 @@
             justify-content: center;
             margin: 0 auto 1rem;
             font-size: 1.3rem;
+            transition: all 0.4s var(--easing-bouncy);
         }
 
-        .contact-item a {
-            color: var(--kam-white);
-            text-decoration: none;
-            transition: var(--transition-smooth);
-        }
-
-        .contact-item a:hover {
-            color: var(--kam-red);
+        .contact-item:hover .contact-item-icon {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4), 0 0 15px rgba(255, 0, 0, 0.2);
+            background: #e60000;
         }
 
         /* Footer */
         footer {
             padding: 3rem 5%;
             background: var(--kam-black);
-            border-top: 1px solid rgba(255, 0, 0, 0.1);
             text-align: center;
+            position: relative;
+        }
+
+        .footer-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--kam-white);
+            margin-bottom: 0.75rem;
+            letter-spacing: 2px;
         }
 
         footer p {
             color: rgba(255, 255, 255, 0.5);
             font-size: 0.9rem;
+        }
+
+        .back-to-top {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--kam-red);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: var(--transition-smooth);
+        }
+
+        .back-to-top:hover {
+            color: var(--kam-white);
+            transform: translateY(-2px);
         }
 
         /* Modal */
@@ -1127,8 +1297,8 @@
         /* Enhanced scroll reveal animations */
         .reveal {
             opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(80px);
+            transition: all 0.9s var(--easing-bouncy);
         }
 
         .reveal.active {
@@ -1138,30 +1308,30 @@
 
         .reveal-left {
             opacity: 0;
-            transform: translateX(-50px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-80px) rotate(-2deg);
+            transition: all 0.9s var(--easing-bouncy);
         }
 
         .reveal-left.active {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) rotate(0deg);
         }
 
         .reveal-right {
             opacity: 0;
-            transform: translateX(50px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(80px) rotate(2deg);
+            transition: all 0.9s var(--easing-bouncy);
         }
 
         .reveal-right.active {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) rotate(0deg);
         }
 
         .reveal-scale {
             opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.85);
+            transition: all 0.9s var(--easing-bouncy);
         }
 
         .reveal-scale.active {
@@ -1488,17 +1658,73 @@
             }
         }
 
+        /* Scroll Progress Indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--kam-red), #ff4444);
+            z-index: 1001;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+        }
+
+        /* Canvas Particles */
+        .particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        /* Service Feature List Stagger */
+        .service-features li {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.4s var(--easing-bouncy);
+        }
+
+        .service-features.features-visible li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .service-features.features-visible li:nth-child(1) { transition-delay: 0s; }
+        .service-features.features-visible li:nth-child(2) { transition-delay: 0.1s; }
+        .service-features.features-visible li:nth-child(3) { transition-delay: 0.2s; }
+        .service-features.features-visible li:nth-child(4) { transition-delay: 0.3s; }
+        .service-features.features-visible li:nth-child(5) { transition-delay: 0.4s; }
+        .service-features.features-visible li:nth-child(6) { transition-delay: 0.5s; }
+
         /* Accessibility: Reduced Motion */
         @media (prefers-reduced-motion: reduce) {
             .particle,
             .scroll-arrow,
             .loader-logo path,
             .hero-grid,
-            .shape {
+            .shape,
+            .logo::after,
+            .hero .btn:first-child::after,
+            .service-features li,
+            .form-group input:focus,
+            .form-group textarea:focus {
                 animation: none !important;
             }
 
             .hero-title.typewriter::after {
+                display: none;
+            }
+
+            .scroll-progress {
+                display: none;
+            }
+
+            .particles-canvas {
                 display: none;
             }
 
@@ -1507,6 +1733,33 @@
             .mobile-nav-overlay,
             .mobile-nav-links li {
                 transition: none !important;
+            }
+
+            .reveal, .reveal-left, .reveal-right, .reveal-scale {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            .service-features li {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            .service-icon svg {
+                transition: none !important;
+            }
+
+            .service-features li::after {
+                transition: none !important;
+            }
+
+            .contact-form .btn.loading::after {
+                animation: none !important;
+                border-color: var(--kam-white);
+            }
+
+            .cursor-glow {
+                display: none !important;
             }
         }
 
@@ -1545,6 +1798,111 @@
                 display: none;
             }
         }
+
+        /* ============================================
+           INTERACTIVE POLISH ENHANCEMENTS
+           ============================================ */
+
+        /* Service Icon Hover Animation */
+        .service-icon svg {
+            transition: transform 0.4s var(--easing-bouncy), filter 0.4s ease;
+        }
+
+        .service-card:hover .service-icon svg {
+            transform: rotate(-5deg) scale(1.1);
+            filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.6));
+        }
+
+        /* Service Feature Hover Underline */
+        .service-features li {
+            position: relative;
+            cursor: default;
+        }
+
+        .service-features.features-visible li:hover {
+            padding-left: 0.5rem;
+        }
+
+        .service-features li::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--kam-red), transparent);
+            transition: width 0.4s ease;
+        }
+
+        .service-features li:hover::after {
+            width: 100%;
+        }
+
+        /* Form Submit Loading State */
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn.loading span {
+            visibility: hidden;
+        }
+
+        .contact-form .btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--kam-white);
+            border-radius: 50%;
+            background: none;
+            animation: btn-spin 0.6s linear infinite;
+            z-index: 5;
+        }
+
+        @keyframes btn-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Nav Active Section Highlighting */
+        .nav-links a.nav-active {
+            color: var(--kam-red);
+        }
+
+        .nav-links a.nav-active::after {
+            width: 100%;
+        }
+
+        /* Cursor Glow / Spotlight Effect */
+        .cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: radial-gradient(
+                300px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(255, 0, 0, 0.07) 0%,
+                transparent 100%
+            );
+        }
+
+        .cursor-glow.active {
+            opacity: 1;
+        }
+
+        /* 3D Tilt on Service Cards */
+        .service-card {
+            transform-style: preserve-3d;
+        }
     </style>
 </head>
 <body>
@@ -1554,6 +1912,12 @@
             <img src="images/kam-logo.svg" alt="KAM Dynamics" class="loader-logo">
         </div>
     </div>
+
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress" id="scroll-progress"></div>
+
+    <!-- Cursor Glow Effect -->
+    <div class="cursor-glow" id="cursor-glow"></div>
 
     <!-- Navigation -->
     <nav id="navbar">
@@ -1779,25 +2143,27 @@
                 <button type="submit" class="btn"><span>Send Message</span></button>
             </form>
             <div class="contact-info reveal stagger-2">
-                <div class="contact-item">
+                <a href="mailto:info@kamdynamics.com" class="contact-item">
                     <div class="contact-item-icon">📧</div>
-                    <a href="mailto:info@kamdynamics.com">info@kamdynamics.com</a>
-                </div>
-                <div class="contact-item">
+                    <span>info@kamdynamics.com</span>
+                </a>
+                <a href="tel:+17047501753" class="contact-item">
                     <div class="contact-item-icon">📞</div>
-                    <a href="tel:+17047501753">(704) 750-1753</a>
-                </div>
-                <div class="contact-item">
+                    <span>(704) 750-1753</span>
+                </a>
+                <a href="https://www.kamdynamics.com" target="_blank" class="contact-item">
                     <div class="contact-item-icon">🌐</div>
-                    <a href="https://www.kamdynamics.com" target="_blank">kamdynamics.com</a>
-                </div>
+                    <span>kamdynamics.com</span>
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer>
+        <div class="footer-brand">KAM Dynamics</div>
         <p>&copy; 2026 KAM Dynamics, LLC. All rights reserved.</p>
+        <a href="javascript:void(0)" class="back-to-top" onclick="scrollToTop()">Back to Top ↑</a>
     </footer>
 
     <!-- About Modal -->
@@ -1821,8 +2187,14 @@
         const ENABLE_LOADING_ANIMATION = true;
         const LOADING_DURATION = 1000; // Milliseconds
         
-        // Animated Particles
-        const ENABLE_PARTICLES = true;
+        // Canvas Particles (replaces CSS div particles)
+        const ENABLE_CANVAS_PARTICLES = true;
+        const CANVAS_PARTICLE_COUNT = 45; // Desktop particle count
+        const CANVAS_PARTICLE_COUNT_MOBILE = 18; // Mobile particle count
+        const ENABLE_CONNECTION_LINES = true; // Draw lines between nearby particles
+
+        // Legacy CSS Particles (disabled when canvas particles are on)
+        const ENABLE_PARTICLES = false;
         const PARTICLE_COUNT = 18; // Lighter particle count (desktop)
         const PARTICLE_COUNT_MOBILE = 8; // Even lighter on mobile
         
@@ -1844,7 +2216,21 @@
         
         // Background Geometric Shapes
         const ENABLE_BG_SHAPES = true;
-        
+
+        // Scroll Progress Indicator
+        const ENABLE_SCROLL_PROGRESS = true;
+
+        // Service Feature List Stagger
+        const ENABLE_FEATURE_STAGGER = true;
+
+        // Interactive Polish
+        const ENABLE_CARD_TILT = true;        // 3D tilt on service cards
+        const CARD_TILT_MAX = 8;              // Max tilt degrees
+        const ENABLE_CURSOR_GLOW = true;      // Cursor spotlight effect
+        const ENABLE_TEXT_SCRAMBLE = true;     // Decode effect on section titles
+        const SCRAMBLE_ITERATIONS = 3;        // Scramble cycles per character
+        const ENABLE_NAV_HIGHLIGHT = true;    // Active section nav highlighting
+
         // =======================================================
 
         // Portfolio visibility toggle
@@ -2111,6 +2497,8 @@
             
             // If valid, submit the form
             if (isValid) {
+                const submitBtn = contactForm.querySelector('.btn');
+                if (submitBtn) submitBtn.classList.add('loading');
                 contactForm.submit();
             } else {
                 // Scroll to first error
@@ -2141,57 +2529,130 @@
             if (loader) loader.style.display = 'none';
         }
 
-        // Animated Particles Generation
-        if (ENABLE_PARTICLES) {
+        // Canvas Particle System with Connection Lines
+        if (ENABLE_CANVAS_PARTICLES) {
+            document.addEventListener('DOMContentLoaded', () => {
+                const hero = document.querySelector('.hero');
+                if (!hero) return;
+
+                // Hide the old CSS particles container
+                const oldContainer = document.getElementById('particles-container');
+                if (oldContainer) oldContainer.style.display = 'none';
+
+                const canvas = document.createElement('canvas');
+                canvas.className = 'particles-canvas';
+                hero.appendChild(canvas);
+                const ctx = canvas.getContext('2d');
+
+                const isMobile = window.innerWidth < 768;
+                const particleCount = isMobile ? CANVAS_PARTICLE_COUNT_MOBILE : CANVAS_PARTICLE_COUNT;
+                const connectionDist = 120;
+                const showLines = ENABLE_CONNECTION_LINES && !isMobile;
+
+                let particles = [];
+                let animId;
+
+                function resize() {
+                    canvas.width = hero.offsetWidth;
+                    canvas.height = hero.offsetHeight;
+                }
+                resize();
+                window.addEventListener('resize', resize);
+
+                function Particle() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.6;
+                    this.vy = (Math.random() - 0.5) * 0.6;
+                    this.radius = 1.5 + Math.random() * 2;
+                    this.opacity = 0.3 + Math.random() * 0.4;
+                }
+
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle());
+                }
+
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Update and draw particles
+                    for (let i = 0; i < particles.length; i++) {
+                        const p = particles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+
+                        // Wrap around edges
+                        if (p.x < 0) p.x = canvas.width;
+                        if (p.x > canvas.width) p.x = 0;
+                        if (p.y < 0) p.y = canvas.height;
+                        if (p.y > canvas.height) p.y = 0;
+
+                        // Draw particle
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255, 0, 0, ${p.opacity})`;
+                        ctx.fill();
+
+                        // Draw glow
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius * 2.5, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255, 0, 0, ${p.opacity * 0.15})`;
+                        ctx.fill();
+
+                        // Connection lines
+                        if (showLines) {
+                            for (let j = i + 1; j < particles.length; j++) {
+                                const p2 = particles[j];
+                                const dx = p.x - p2.x;
+                                const dy = p.y - p2.y;
+                                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                                if (dist < connectionDist) {
+                                    const lineOpacity = (1 - dist / connectionDist) * 0.15;
+                                    ctx.beginPath();
+                                    ctx.moveTo(p.x, p.y);
+                                    ctx.lineTo(p2.x, p2.y);
+                                    ctx.strokeStyle = `rgba(255, 0, 0, ${lineOpacity})`;
+                                    ctx.lineWidth = 0.5;
+                                    ctx.stroke();
+                                }
+                            }
+                        }
+                    }
+
+                    animId = requestAnimationFrame(animate);
+                }
+
+                // Respect reduced motion
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    animate();
+                }
+            });
+        } else if (ENABLE_PARTICLES) {
+            // Legacy CSS div-based particles (fallback)
             function createParticles() {
                 const container = document.getElementById('particles-container');
                 if (!container) return;
-                
+
                 const isMobile = window.innerWidth < 768;
                 const count = isMobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT;
-                
+
                 for (let i = 0; i < count; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
-                    
-                    // Small subtle particles (4-8px)
                     const size = 4 + Math.random() * 4;
                     particle.style.width = size + 'px';
                     particle.style.height = size + 'px';
-                    
-                    // Random horizontal position
-                    const startX = Math.random() * 100;
-                    particle.style.left = startX + '%';
-                    
-                    // Random starting vertical position (spread across viewport)
+                    particle.style.left = Math.random() * 100 + '%';
                     particle.style.top = Math.random() * 100 + '%';
-                    
-                    // Organic drift - more noticeable movement
-                    const driftX = (Math.random() - 0.5) * 120; // -60 to +60 pixels
-                    particle.style.setProperty('--drift-x', driftX + 'px');
-                    
-                    // Vertical drift with more range
-                    const driftY = -40 - Math.random() * 60; // -40px to -100px
-                    particle.style.setProperty('--drift-y', driftY + 'px');
-                    
-                    // Varying transparency per particle
-                    const maxOpacity = 0.2 + Math.random() * 0.4; // 0.2 to 0.6
-                    particle.style.setProperty('--max-opacity', maxOpacity);
-                    
-                    // Slow organic animation (25-40 seconds) - gentle background movement
-                    const duration = 25 + Math.random() * 15;
-                    particle.style.animationDuration = duration + 's';
-                    
-                    // Random start time
+                    particle.style.setProperty('--drift-x', (Math.random() - 0.5) * 120 + 'px');
+                    particle.style.setProperty('--drift-y', (-40 - Math.random() * 60) + 'px');
+                    particle.style.setProperty('--max-opacity', 0.2 + Math.random() * 0.4);
+                    particle.style.animationDuration = (25 + Math.random() * 15) + 's';
                     particle.style.animationDelay = -(Math.random() * 40) + 's';
-                    
                     container.appendChild(particle);
                 }
-                
-                console.log('Particles created:', count, '- subtle organic mode');
             }
-            
-            // Create particles on load
             document.addEventListener('DOMContentLoaded', createParticles);
         }
 
@@ -2335,6 +2796,169 @@
             // Hide all background shapes if disabled
             document.querySelectorAll('.bg-shapes').forEach(el => {
                 el.style.display = 'none';
+            });
+        }
+
+        // Scroll Progress Indicator
+        if (ENABLE_SCROLL_PROGRESS) {
+            const progressBar = document.getElementById('scroll-progress');
+            if (progressBar) {
+                window.addEventListener('scroll', () => {
+                    const scrollTop = window.pageYOffset;
+                    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const scrollPercent = (scrollTop / docHeight) * 100;
+                    progressBar.style.width = scrollPercent + '%';
+                }, { passive: true });
+            }
+        } else {
+            const progressBar = document.getElementById('scroll-progress');
+            if (progressBar) progressBar.style.display = 'none';
+        }
+
+        // Service Feature List Stagger Animation
+        if (ENABLE_FEATURE_STAGGER) {
+            const featureLists = document.querySelectorAll('.service-features');
+            const featureObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('features-visible');
+                        featureObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            featureLists.forEach(list => featureObserver.observe(list));
+        } else {
+            // Make features visible immediately if stagger is disabled
+            document.querySelectorAll('.service-features li').forEach(li => {
+                li.style.opacity = '1';
+                li.style.transform = 'none';
+            });
+        }
+
+        // ============================================
+        // INTERACTIVE POLISH - IMPLEMENTATION
+        // ============================================
+
+        // Navbar Active Section Highlighting
+        if (ENABLE_NAV_HIGHLIGHT) {
+            const navHighlightLinks = document.querySelectorAll('.nav-links a[onclick*="scrollToSection"]');
+            const navSections = document.querySelectorAll('section[id]');
+
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navHighlightLinks.forEach(link => {
+                            link.classList.remove('nav-active');
+                            if (link.getAttribute('onclick')?.includes(id)) {
+                                link.classList.add('nav-active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-40% 0px -55% 0px' });
+
+            navSections.forEach(section => {
+                if (!section.classList.contains('hidden')) {
+                    sectionObserver.observe(section);
+                }
+            });
+
+            // Clear highlights when scrolled to hero (top)
+            window.addEventListener('scroll', () => {
+                if (window.scrollY < 200) {
+                    navHighlightLinks.forEach(link => link.classList.remove('nav-active'));
+                }
+            }, { passive: true });
+        }
+
+        // Text Scramble/Decode on Section Titles
+        if (ENABLE_TEXT_SCRAMBLE && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
+
+            function scrambleText(element) {
+                const originalText = element.textContent;
+                const length = originalText.length;
+                let iteration = 0;
+                const maxIterations = length * SCRAMBLE_ITERATIONS;
+
+                const interval = setInterval(() => {
+                    element.textContent = originalText.split('').map((char, index) => {
+                        if (char === ' ') return ' ';
+                        if (index < iteration / SCRAMBLE_ITERATIONS) return originalText[index];
+                        return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+                    }).join('');
+
+                    iteration++;
+                    if (iteration > maxIterations) {
+                        element.textContent = originalText;
+                        clearInterval(interval);
+                    }
+                }, 30);
+            }
+
+            const sectionTitles = document.querySelectorAll('.section-title');
+            const titleObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        scrambleText(entry.target);
+                        titleObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            sectionTitles.forEach(title => titleObserver.observe(title));
+        }
+
+        // Cursor Glow / Spotlight Effect
+        if (ENABLE_CURSOR_GLOW && window.innerWidth > 768 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const cursorGlow = document.getElementById('cursor-glow');
+            if (cursorGlow) {
+                const glowSections = document.querySelectorAll('.hero, .services');
+
+                document.addEventListener('mousemove', (e) => {
+                    cursorGlow.style.setProperty('--mouse-x', e.clientX + 'px');
+                    cursorGlow.style.setProperty('--mouse-y', e.clientY + 'px');
+
+                    let overSection = false;
+                    glowSections.forEach(section => {
+                        const rect = section.getBoundingClientRect();
+                        if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                            overSection = true;
+                        }
+                    });
+
+                    if (overSection) {
+                        cursorGlow.classList.add('active');
+                    } else {
+                        cursorGlow.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // 3D Tilt Effect on Service Cards
+        if (ENABLE_CARD_TILT && window.innerWidth > 768 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const tiltCards = document.querySelectorAll('.service-card');
+
+            tiltCards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = ((y - centerY) / centerY) * -CARD_TILT_MAX;
+                    const rotateY = ((x - centerX) / centerX) * CARD_TILT_MAX;
+
+                    card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) scale(1.02)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
             });
         }
 

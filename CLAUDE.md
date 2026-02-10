@@ -30,9 +30,17 @@ In `index.html` script section (around line 1520):
 - `SHOW_PORTFOLIO` - Toggle portfolio section visibility
 - `SCROLL_ANIMATIONS_REVERSE` - Enable/disable reverse animations on scroll up
 - `ENABLE_LOADING_ANIMATION` / `LOADING_DURATION` - Page loader settings
-- `ENABLE_PARTICLES` / `PARTICLE_COUNT` - Hero particle animation
+- `ENABLE_CANVAS_PARTICLES` / `CANVAS_PARTICLE_COUNT` - Canvas-based particle system with network effect
+- `ENABLE_CONNECTION_LINES` - Draw connecting lines between nearby particles
+- `ENABLE_PARTICLES` / `PARTICLE_COUNT` - Legacy CSS div particles (fallback when canvas disabled)
 - `ENABLE_TYPEWRITER` / `TYPEWRITER_SPEED` - Hero title typewriter effect
 - `ENABLE_HERO_PARALLAX` - Hero text parallax on scroll
+- `ENABLE_SCROLL_PROGRESS` - Thin red scroll progress bar at top of viewport
+- `ENABLE_FEATURE_STAGGER` - Staggered reveal animation for service feature lists
+- `ENABLE_CARD_TILT` / `CARD_TILT_MAX` - 3D tilt effect on service cards (desktop only)
+- `ENABLE_CURSOR_GLOW` - Cursor spotlight effect in hero/services sections (desktop only)
+- `ENABLE_TEXT_SCRAMBLE` / `SCRAMBLE_ITERATIONS` - Decode/scramble effect on section titles
+- `ENABLE_NAV_HIGHLIGHT` - Active section highlighting in navbar on scroll
 
 In `aboutme.html` script section:
 - `ENABLE_STATS_COUNTER` - Toggle certification stats display
@@ -59,6 +67,7 @@ Design tokens defined in `:root`:
 - `--kam-gray: #1a1a1a` - Secondary background
 - `--kam-light-gray: #333333` - Borders/accents
 - `--transition-smooth` - Standard cubic-bezier transition
+- `--easing-bouncy` - Bouncy overshoot easing for reveals and card interactions
 
 ## Typography
 
