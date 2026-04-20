@@ -123,6 +123,11 @@
             transform: translateY(-2px);
         }
 
+        .credential-badge-link {
+            text-decoration: none;
+            cursor: pointer;
+        }
+
         .about-section {
             margin-bottom: 2.5rem;
         }
@@ -386,6 +391,14 @@
             object-fit: contain;
         }
 
+        .cert-logo-badge {
+            height: 60px;
+            width: 60px;
+            max-width: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         .cert-logo-placeholder {
             height: 50px;
             width: 80px;
@@ -528,6 +541,7 @@
             <div class="credentials">
                 <span class="credential-badge">Red Hat Certified Architect</span>
                 <span class="credential-badge">FAA Part 107 Certified</span>
+                <a href="https://droners.io/accounts/d7ip-eu4g/" target="_blank" rel="noopener noreferrer" class="credential-badge credential-badge-link" title="Droners.io Professional Aerial Photography Drone Pilot">Droners.io Verified</a>
             </div>
             <div class="about-links">
                 <a href="https://khary.net" target="_blank" rel="noopener noreferrer" class="about-link">More about me <span class="external-icon">↗</span></a>
@@ -672,6 +686,13 @@
                     <img src="images/faa-logo.svg" alt="FAA" class="cert-logo" loading="lazy">
                     <div class="cert-name">FAA Part 107 Remote Pilot Certificate</div>
                     <div class="cert-info">Federal Aviation Administration</div>
+                </div>
+                <div class="cert-card" data-parallax="card">
+                    <a target="_blank" rel="noopener noreferrer" title="Droners.io Professional Aerial Photography Drone Pilot" href="https://droners.io/accounts/d7ip-eu4g/">
+                        <img alt="Droners.io Professional Aerial Photography Drone Pilot" src="https://d1io6rrq57evdc.cloudfront.net/static/images/droners_badge.png" class="cert-logo cert-logo-badge" width="200" height="200" loading="lazy">
+                    </a>
+                    <div class="cert-name">Professional Aerial Photography Drone Pilot</div>
+                    <div class="cert-info">Droners.io</div>
                 </div>
             </div>
 
