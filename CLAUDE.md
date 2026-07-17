@@ -17,13 +17,14 @@ One page, no build system, no package manager, no dependencies. **All CSS and JS
 `index.html`** — there are no external stylesheets or scripts beyond the Google Fonts link.
 
 - **index.html** — the entire site. Roughly:
-  - `<head>`: meta/OG tags, JSON-LD `LocalBusiness` structured data, the intro-card arming
+  - `<head>`: meta/OG tags, JSON-LD `LocalBusiness` structured data, the intro-cut arming
     script, then one big `<style>` block
-  - `<body>`: intro title card, ticker, nav, and sections in order — `#top` (hero),
+  - `<body>`: nav and sections in order — `#top` (hero, with the intro-cut logo slate inside it),
     `#services-aerial`, `#preview` (the preview-before-flight workflow), `#editing`, `#about`,
-    `#also`, `#contact`, footer
-  - One `<script>` block at the bottom (~100 lines): nav scroll state, live timecode, portfolio
-    flag, intro title card, footer end slate
+    `#also`, `#contact`, footer. (A hidden `.ticker` element still exists in the markup but is
+    `display:none` — see below.)
+  - One `<script>` block at the bottom (~90 lines): nav scroll state, live timecode, portfolio
+    flag, the in-hero intro cut, footer end slate
 - **images/** — brand and credential logos (SVG/PNG), `screenshots/` for the workflow montage,
   `og-card.jpg` (1200×630 social card)
 - **videos/** — background clips and the logo sting
@@ -82,54 +83,58 @@ There is no config-flags block. The only runtime toggle is a URL param:
 
 Only three media queries:
 
-- `@media (prefers-reduced-motion: reduce)` — covers the intro card and scroll behaviour
+- `@media (prefers-reduced-motion: reduce)` — disables smooth scroll (and, by never arming
+  `.hero-cut`, the intro cut)
 - `@media (max-width: 1024px)` — layout collapses to single column; **nav links are hidden here
   and there is no hamburger replacement**, so only the brand and CTA remain on mobile
 - `@media (max-width: 600px)` — the workflow steps go one-up
 
-## The logo sting (intro card + footer end slate)
+## The logo sting (in-hero intro cut + footer end slate)
 
 `videos/kam-logo-sting.mp4` is a ~4.1s clip where a light streak draws the KAM ellipse and the
 logo resolves. Derived from `videos/kamdynamics-logo.mp4` (the 5s original, kept as the source)
 by trimming ~0.9s of dead black off the front and cropping tight to the artwork.
 
+**The intro is an in-hero cut, not a full-screen overlay.** The hero (`#top`) renders fully
+composed from the first frame — nav links, CTA, the REC/timecode HUD, the meta row, the lede, and
+both buttons are all live and clickable. Only two things wait: the hero **background** and the
+**headline**. The logo plays as the background footage the page sits on (`.hero-slate`, a video
+letterboxed in the upper band on opaque black), then at the sting's lock it cross-dissolves to the
+drone footage (`.hero-video`) while the three `#hero-h1 .hl` headline lines stage in one at a time.
+The nav brand (`.brand`) also holds until the cut, so the wordmark isn't shown twice while the
+logo plays. An earlier full-screen `.intro` overlay approach was removed — don't reintroduce it.
+
 Things worth knowing before touching it:
 
 - **The clip is matted on pure `#000000`**, so `mix-blend-mode: screen` drops the background
-  entirely. No alpha channel or transparent WebM is needed on any dark surface.
+  entirely. The slate is dimmed to `opacity: 0.6` (about the house video's 0.55) so the headline
+  reads over it and there's no brightness pop at the cut.
 - **Its beats, in media seconds:** streak draws to ~1.6, the KAM mark resolves by ~2.1, a quiet
   beat to ~2.77, the wordmark fades in, and it **locks at 3.25** and holds for under a second.
-  It plays at `playbackRate` 1.15 to buy ~0.4s.
-- **The page fade starts at 2.55 — before the lock — and runs 1.3s**, so the logo finishes
-  resolving while the page is already rising behind it (~1.2s of overlap). Starting early pays
-  for the long fade: time-to-hero stays ~3.5s. `REVEAL_AT` and the CSS transition duration are
-  coupled — `FADE` in the script must match `.intro`'s duration, and `FADE_FAST` must match
-  `.intro--fast`. All are in media seconds against *this* cut, so if the asset is re-cut,
-  re-measure the beats rather than guessing.
-- **The backdrop and logo must fade together.** Fading the black out from under the logo sounds
-  better but doesn't work: `screen` needs the black to composite against, and without it the
-  clip's matte renders as an opaque black box.
-- **The logo sits high, not centred** — `padding-bottom` on the grid puts its optical centre at
-  ~42% of the viewport (geometric centre reads as low for a title card). It's padding rather than
-  a translate on the video because `.intro--out` already owns the video's transform. A
-  `max-height: 60vh` + `contain` on the video keeps a tall logo off the edges on short/landscape
-  viewports, where width alone let it fill ~84% of the height.
-- **The intro card is `display: none` unless JS arms it.** A synchronous script in `<head>` adds
-  `intro-armed` + `intro-lock` to `<html>` only when the visitor has not seen it this session
-  (`sessionStorage['kam-intro-seen']`) and does not prefer reduced motion. No-JS visitors get the
-  hero, never a black overlay.
-- **Any input skips it** (click/touch/key/wheel/scroll) using a fast 260ms fade — don't make
-  someone sit through the unhurried version of a thing they just dismissed. Every failure path —
-  autoplay blocked, video error, stall — must fall through to the hero, and all of them take the
-  fast fade too. `BAIL_OUT` (3100ms from script start) is the backstop that catches a video which
-  never plays; it is deliberately kept clear of the ~2.6s normal cue so a slow-starting video
-  doesn't get its logo chopped by a watchdog racing the happy path.
-- Handlers are wrapped rather than bound straight to `reveal` (`onSkip`/`onEnd`/`onErr`): bound
-  directly, each would pass its Event to `reveal(fast)`, and an object is truthy — so the gentle
-  fade would silently never run.
-- The card has **no poster on purpose**: `images/kam-logo-still.png` is the *end* of the
-  animation, so it would spoil the reveal and become an LCP candidate. The still is the footer
-  poster and the reduced-motion fallback only.
+  It plays at `playbackRate` 1.15. The JS cues the cut at `CUT_AT = 3.5` (just past the lock);
+  this is in media seconds against *this* cut, so re-measure the beats if the asset is re-cut.
+- **`.hero-cut` on `<html>` is what arms everything.** A synchronous `<head>` script adds it only
+  on the first visit of a session (`sessionStorage['kam-intro-seen']`) with motion allowed. All
+  the waiting-and-staging CSS is scoped under `.hero-cut`, and the class is set *before first
+  paint* so there's no flash of the un-staged headline. Without it — repeat visit, reduced motion,
+  or no-JS — the hero renders fully composed immediately: `.hero-slate` stays `display:none`, the
+  headline lines and brand are visible, the house video plays. `is-live` (added by the JS at the
+  cut) triggers the dissolve + stagger.
+- **Every failure path falls straight to the live hero.** Autoplay blocked (`play().catch`),
+  decode/source error, and a stall that never reaches `CUT_AT` all call `goLive()`; a `BAIL`
+  watchdog (4200ms) is the final backstop. Any user interaction (`click/touch/key/wheel/scroll`)
+  also resolves the cut at once — so a visitor who immediately scrolls never leaves the headline
+  un-staged. Nothing can strand the logo on screen or leave the headline hidden.
+- **`CUT_AT`, the `.hero-slate` transition (0.6s), and the `#hero-h1 .hl` stagger delays are
+  coupled.** The slate's dissolve and the headline stagger both fire off `is-live`; keep the
+  `setTimeout` that removes the slate (700ms) past the dissolve.
+- **The slate sits in the upper band** (`top: 8%; height: 46%; object-fit: contain`), not the full
+  frame: the headline is huge and bottom-aligned, so a full-height logo dangled its wordmark into
+  "ANGLE." and stacked black above. Anchoring it high clears the lower title and removes the dead
+  space overhead.
+- **`images/kam-logo-still.png`** (the resolved logo) is used as the **footer** slate poster and
+  reduced-motion fallback only — not by the hero cut (the hero starts on the moving logo, not its
+  end frame).
 - The footer end slate plays once per page view via `IntersectionObserver`, which `unobserve`s
   before calling `play()`.
 
@@ -143,14 +148,19 @@ Things worth knowing before touching it:
 - The contact form posts to **FormSubmit.co** (`action` on the `.form` element).
 - The nav mark stays the static `images/kam-logo.svg`. The sting is deliberately *not* used
   there: `.brand-mark` is 48×28 and sits beside the text "KAM Dynamics", so the clip's own
-  wordmark would be illegible and redundant at that size.
+  wordmark would be illegible and redundant at that size. (On first visit the whole `.brand`
+  fades in after the logo cut — see the intro-cut section.)
+- **The trust ticker is hidden** (`display:none` on `.ticker`; the markup is kept for easy
+  revival). Its scrolling marquee read as dated. When it went, its "Fully insured" signal was
+  re-added as the first bullet in the `#services-aerial` feature list; "Now booking" was dropped
+  and "Fast turnaround" already existed in that list. If you re-enable it, restore `.nav`'s
+  `top` offset (it was moved to `0` to fill the 32px the fixed ticker used to occupy).
 - `images/kam-logo-animated.gif` is a 2.4 MB GIF of the same sting — superseded by the 111 KB
   MP4 and unreferenced. Don't use or commit it.
 
 ## Known gaps
 
 - Nav links vanish at ≤1024px with no mobile menu to replace them.
-- `prefers-reduced-motion` covers the intro card and scroll behaviour, but several
-  unconditional animations still have no opt-out: `sun-pulse`, the `.scroll-cue` bob, the
-  ticker marquee, the two looping background videos, and a 42ms `setInterval` driving the hero
-  timecode.
+- `prefers-reduced-motion` gates the intro cut and smooth scroll, but several unconditional
+  animations still have no opt-out: `sun-pulse`, the `.scroll-cue` bob, the two looping background
+  videos, and a 42ms `setInterval` driving the hero timecode.

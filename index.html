@@ -38,17 +38,18 @@
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
-<!-- Arms the intro title card before first paint, so the hero never flashes
-     behind it. Runs synchronously and deliberately stays tiny. The card is
-     display:none unless this adds the class, which means no-JS visitors and
-     anything that throws here simply get the hero. -->
+<!-- Arms the in-hero intro cut before first paint: the logo plays in the hero
+     background, cross-dissolves to the drone footage, and the headline stages
+     in. Gated to once per session and skipped under reduced-motion — in both
+     cases the hero renders fully composed with no logo phase. Synchronous and
+     tiny so there's no flash of the un-staged headline before it arms. -->
 <script>
   (function () {
     try {
       var seen = sessionStorage.getItem('kam-intro-seen');
       var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!seen && !still) document.documentElement.classList.add('intro-armed', 'intro-lock');
-    } catch (e) { /* private mode / storage blocked -> no card, hero as normal */ }
+      if (!seen && !still) document.documentElement.classList.add('hero-cut');
+    } catch (e) { /* storage blocked / unsupported -> straight to the live hero */ }
   })();
 </script>
 
@@ -150,71 +151,23 @@
   img, svg, video { display: block; max-width: 100%; }
   ::selection { background: var(--red); color: var(--paper); }
 
-  /* ============== INTRO TITLE CARD ==============
-     Hidden by default. The head script adds .intro-armed to <html> only when
-     the card should play, so no-JS / unsupported browsers never see a black
-     overlay they can't dismiss. */
-  .intro { display: none; }
-  .intro-armed .intro {
-    display: grid;
-    place-items: center;
-    /* Sits the logo's centre at ~42% rather than 50%: geometric centre reads as
-       slightly low, so a title card wants to be a touch high. Done as padding
-       rather than a translate because .intro--out already owns the video's
-       transform, and a second one there would silently overwrite the scale. */
-    padding-bottom: 15vh;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    /* pure black to match the clip's own background exactly */
-    background: #000;
-    /* A long, even dissolve rather than a quick wipe: it starts while the logo
-       is still resolving, so the two overlap for well over a second. Eases in
-       and out so the logo holds briefly before washing and the page settles
-       rather than snapping. The backdrop can't fade separately from the logo —
-       screen blend needs the black to composite against, and without it the
-       clip's matte would render as a black box. */
-    transition: opacity 1.3s cubic-bezier(0.4, 0, 0.6, 1);
-  }
-  /* Scroll lock is its own class, not .intro-armed: the reveal releases the
-     lock immediately but .intro-armed has to survive until the fade finishes,
-     since it carries the display:grid the transition needs. */
-  .intro-lock body { overflow: hidden; }
-  .intro-video {
-    width: min(70vw, 720px);
-    /* Width alone lets the mark eat a short viewport — on a landscape phone it
-       ran 84% of the height and, once lifted, sat 2px off the top edge. Capping
-       height keeps it clear of the edges; contain does the fitting, and the
-       letterbox it adds is invisible under the screen blend below. */
-    max-height: 60vh;
-    object-fit: contain;
-    /* the clip is matted on pure black; screen blend drops the matte entirely,
-       so no alpha channel / transparent WebM is needed */
-    mix-blend-mode: screen;
-    transition: transform 1.3s cubic-bezier(0.4, 0, 0.6, 1);
-  }
-  .intro.intro--out { opacity: 0; pointer-events: none; }
-  /* drifts back a touch as it dissolves, so the logo recedes into the page
-     rather than the black simply being switched off over it */
-  .intro.intro--out .intro-video { transform: scale(1.04); }
-  /* A skip is a request to be done now — don't make someone sit through the
-     unhurried version of a thing they just dismissed. */
-  .intro.intro--fast, .intro.intro--fast .intro-video { transition-duration: .26s; }
-
-  /* Reduced motion: the card never arms (see head script) and the end slate
-     never plays — its poster is the resolved logo, so it stays meaningful. */
+  /* Reduced motion: the intro cut never arms and the footer slate never plays
+     (its poster is the resolved logo, so it stays meaningful). Also drop smooth
+     scrolling. The in-hero cut styling lives with the hero, further down. */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .intro { display: none !important; }
   }
 
   /* ============== TICKER STRIP TOP ============== */
   .ticker {
+    /* Hidden: the scrolling marquee read as a dated <marquee> effect. Nav moves
+       up to top:0 to fill the 32px the fixed ticker used to occupy. */
+    display: none;
     background: var(--red);
     color: var(--paper);
     overflow: hidden;
     height: 32px;
-    display: flex; align-items: center;
+    align-items: center;
     border-bottom: 1px solid var(--black);
     font-family: var(--mono);
     font-size: 11px;
@@ -244,7 +197,7 @@
   /* ============== NAV (overlaid) ============== */
   .nav {
     position: fixed;
-    top: 32px; left: 0; right: 0;
+    top: 0; left: 0; right: 0;   /* was 32px, under the now-hidden ticker */
     z-index: 100;
     padding: 24px 40px;
     display: flex; align-items: center; justify-content: space-between;
@@ -325,6 +278,58 @@
     opacity: 0.55;
     filter: saturate(0.85) contrast(1.05);
   }
+
+  /* ===== IN-HERO INTRO CUT ===== */
+  .hero-slate { display: none; }
+  .hero-cut .hero-slate {
+    display: block;
+    position: absolute; inset: 0;
+    z-index: 1;                      /* above footage (z0), below HUD (z5/10) */
+    background: #000;                /* occludes the house video + faux sky */
+    transition: opacity .6s ease;    /* the cross-dissolve to live footage */
+  }
+  .hero-slate-video {
+    /* Sits in the UPPER band, not the full frame: the headline is enormous and
+       bottom-aligned, so a full-height contained logo dangled its wordmark into
+       "ANGLE." and stacked black above. Anchoring it to the top clears the lower
+       title (ANGLE + lede + CTAs sit on clean black) and removes the dead space
+       overhead; the mark overlaps only the upper lines, as dimmed footage. */
+    position: absolute;
+    top: 8%; left: 0; right: 0;
+    height: 46%;
+    width: 100%;
+    object-fit: contain;
+    /* Dimmed to about the house video's level (0.55) so it reads as the
+       background footage the composed hero sits on, not a layer fighting the
+       headline. The slate's own black stays opaque, so no drone shot bleeds
+       through yet — the logo just plays quieter, then the whole slate dissolves
+       to the house video, dimmed the same amount. No brightness pop at the cut. */
+    opacity: 0.6;
+  }
+  .hero-cut.is-live .hero-slate { opacity: 0; pointer-events: none; }
+  /* ONLY the three headline lines wait — everything else (nav, HUD, the meta
+     row, the lede, the CTAs, the logo footage) stays composed the whole time,
+     so the page never feels captive. At the cut (is-live) the lines rise,
+     unblur and fade up one at a time over the drone footage. */
+  .hero-cut #hero-h1 .hl {
+    opacity: 0;
+    transform: translateY(0.26em);
+    filter: blur(6px);
+    transition: opacity .8s ease, transform 1s cubic-bezier(.16,.8,.28,1),
+                filter .7s ease;
+    will-change: opacity, transform, filter;
+  }
+  .hero-cut.is-live #hero-h1 .hl { opacity: 1; transform: none; filter: none; }
+  /* one line at a time */
+  .hero-cut.is-live #hero-h1 .hl:nth-child(1) { transition-delay: .05s; }
+  .hero-cut.is-live #hero-h1 .hl:nth-child(2) { transition-delay: .29s; }
+  .hero-cut.is-live #hero-h1 .hl:nth-child(3) { transition-delay: .53s; }
+  /* The nav brand (mark + "KAM Dynamics") also waits — no sense showing the
+     wordmark in the corner while the logo itself is playing full-size behind
+     the hero. It fades in with the headline. Opacity only, so its slot in the
+     flex nav stays reserved and the links/CTA don't shift when it arrives. */
+  .hero-cut .brand { opacity: 0; transition: opacity .8s ease; }
+  .hero-cut.is-live .brand { opacity: 1; transition-delay: .3s; }
   /* Faux footage: animated horizon + sun + birds */
   .hero-bg::before {
     content: '';
@@ -478,6 +483,10 @@
     transform: skewX(-4deg);
   }
   .hero h1 .red-block span { display: inline-block; transform: skewX(4deg); }
+  /* Each headline line on its own row (replaces the old <br>s) and an
+     independent box for the staged entrance — the reveal transform lives here,
+     leaving the red-block's skew and the stroke outline untouched inside. */
+  .hero h1 .hl { display: block; }
   .hero-side {
     display: flex; flex-direction: column; gap: 24px;
   }
@@ -1721,17 +1730,6 @@
 </head>
 <body data-portfolio="on">
 
-<!-- ============== INTRO TITLE CARD ==============
-     No poster: the still is the *end* of the animation, so using it here would
-     spoil the reveal and hand the overlay a large LCP candidate. The card's
-     black background already matches frame one. No autoplay attribute either —
-     JS calls play() so a blocked-autoplay rejection is catchable. -->
-<div class="intro" id="intro" aria-hidden="true">
-  <video class="intro-video" id="introVideo" muted playsinline preload="auto">
-    <source src="videos/kam-logo-sting.mp4" type="video/mp4">
-  </video>
-</div>
-
 <!-- ============== TICKER (trust/value bar) ============== -->
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track">
@@ -1781,6 +1779,17 @@
     <div class="hero-sun"></div>
     <div class="hero-drone"></div>
   </div>
+
+  <!-- Intro-cut logo slate. z-index 1 sits above the house video + faux-footage
+       (z 0) but below the REC/timecode/frame-marks HUD (z 5/10), so the HUD
+       frames the logo like live footage. Shown only when <html> has .hero-cut
+       (first visit, motion allowed); otherwise it stays display:none. -->
+  <div class="hero-slate" aria-hidden="true">
+    <video class="hero-slate-video" muted playsinline preload="auto">
+      <source src="videos/kam-logo-sting.mp4" type="video/mp4">
+    </video>
+  </div>
+
   <div class="hero-grain"></div>
   <div class="hero-frame-marks"><div class="bl"></div><div class="br"></div></div>
 
@@ -1801,9 +1810,9 @@
         <span><span class="key">STATUS ◢</span>Booking</span>
       </div>
       <h1 id="hero-h1">
-        Elevated<br>
-        <span class="red-block"><span>from every</span></span><br>
-        <span class="stroke">angle.</span>
+        <span class="hl">Elevated</span>
+        <span class="hl"><span class="red-block"><span>from every</span></span></span>
+        <span class="hl"><span class="stroke">angle.</span></span>
       </h1>
     </div>
     <div class="hero-side">
@@ -1838,10 +1847,11 @@
     <div class="service-vis-tc">00:01:14 · F/4 · 1/240</div>
   </div>
   <div class="service-text">
-    <div class="service-num">— 01 / The aerial practice</div>
+    <div class="service-num">— 01 / The drone work</div>
     <h3>Aerial coverage<br>for real estate.</h3>
     <p>FAA Part&nbsp;107 commercial drone work based in Charlotte. Every shoot is insured and flown to a documented checklist, then delivered as color-graded, listing-ready video and stills.</p>
     <ul class="service-feats">
+      <li>Fully insured</li>
       <li>4K aerial video</li>
       <li>Aerial listing stills</li>
       <li>Twilight &amp; blue-hour shoots</li>
@@ -2170,92 +2180,67 @@
   const params = new URLSearchParams(location.search);
   if (params.get('portfolio') === 'on') document.body.dataset.portfolio = 'on';
 
-  // ============== INTRO TITLE CARD ==============
-  // Beats of the sting, in media seconds: the streak draws to ~1.6, the KAM
-  // mark resolves by ~2.1, a quiet beat to ~2.77, the wordmark fades in, and
-  // it locks at 3.25. The page fade starts at 2.55 — once the mark has formed
-  // but before the wordmark lands — and runs 1.3s, so the logo finishes
-  // resolving while the page is already rising behind it. Starting earlier pays
-  // for the longer fade: time-to-hero is 2.55 / 1.15 = 2.22s + 1.3s ≈ 3.6s,
-  // the same as the old short wipe that began at the lock.
+  // ============== IN-HERO INTRO CUT ==============
+  // The hero stays fully composed the whole time — nav, HUD, meta, lede, CTAs
+  // are all live. Only the BACKGROUND and the headline wait: the logo plays as
+  // the footage the page sits on, then at the sting's lock (media ~3.25, held a
+  // beat to 3.5) it cross-dissolves to the drone shot while the three headline
+  // lines stage in. Session-gated by the head script; this JS runs the cut and
+  // marks the session seen. Every failure path (autoplay blocked, decode error,
+  // stall) falls straight through to the live hero — nothing can leave the
+  // headline hidden or the logo stuck on screen.
   (function () {
-    const intro = document.getElementById('intro');
-    if (!intro || !document.documentElement.classList.contains('intro-armed')) return;
+    const root = document.documentElement;
+    if (!root.classList.contains('hero-cut')) return;   // repeat visit / reduced motion / no JS
+    const slate = document.querySelector('.hero-slate');
+    const video = slate && slate.querySelector('video');
+    if (!video) { root.classList.add('is-live'); return; }
 
-    const video = document.getElementById('introVideo');
-    const RATE = 1.15;          // imperceptible on a sting, buys ~0.4s
-    const REVEAL_AT = 2.55;     // media seconds: overlap the logo's final act
-    const FADE = 1300;          // must match the .intro transition duration
-    const FADE_FAST = 260;      // must match .intro--fast
-    // Hard ceiling from script start. Every bail-out — this, a play() rejection,
-    // a decode error — takes the fast fade: if the sting never ran there is
-    // nothing to dissolve gracefully, and being behind is the wrong moment to
-    // linger. That keeps the worst case (3.1s + 0.26s) well inside budget while
-    // leaving the normal cue at ~2.6s a real margin, so a slow-starting video
-    // doesn't get its logo chopped by a watchdog racing the happy path.
-    const BAIL_OUT = 3100;
-    const SKIP_EVENTS = ['click', 'touchstart', 'keydown', 'wheel', 'scroll'];
+    const RATE = 1.15;         // imperceptible on a sting, trims ~0.4s off the wait
+    const CUT_AT = 3.5;        // media seconds: just past the 3.25 lock, logo held a beat
+    const BAIL = 4200;         // ms watchdog: cut to live no matter what
+    const SKIP = ['click', 'touchstart', 'keydown', 'wheel', 'scroll'];
 
-    let done = false;
-    let timer = null;
-    let tick = null;
+    let live = false, tick = null, timer = null;
 
-    function reveal(fast) {
-      if (done) return;         // skip + scheduler + ended can all race here
-      done = true;
-      clearTimeout(timer);
+    function goLive() {
+      if (live) return;        // skip + scheduler + ended + watchdog can all race here
+      live = true;
       clearTimeout(tick);
-      SKIP_EVENTS.forEach(function (e) { window.removeEventListener(e, onSkip); });
+      clearTimeout(timer);
+      SKIP.forEach(function (e) { window.removeEventListener(e, goLive); });
       video.removeEventListener('playing', schedule);
       video.removeEventListener('timeupdate', schedule);
-      video.removeEventListener('ended', onEnd);
-      video.removeEventListener('error', onErr);
-
+      video.removeEventListener('ended', goLive);
+      video.removeEventListener('error', goLive);
       try { sessionStorage.setItem('kam-intro-seen', '1'); } catch (e) {}
-
-      if (fast) intro.classList.add('intro--fast');
-      intro.classList.add('intro--out');
-      document.documentElement.classList.remove('intro-lock');   // scroll usable at once
-      setTimeout(function () {
-        video.pause();
-        intro.remove();         // removing the node retires .intro-armed's rule
-        document.documentElement.classList.remove('intro-armed');
-      }, (fast ? FADE_FAST : FADE) + 60);   // just past the CSS transition
+      root.classList.add('is-live');           // dissolve slate out, stage headline in
+      setTimeout(function () { video.pause(); slate.remove(); }, 700);  // past the .6s dissolve
     }
 
-    // Every listener goes through a wrapper: bound directly, each would hand
-    // reveal() its Event as `fast`, and an object is truthy — so the gentle
-    // fade would never run.
-    function onSkip() { reveal(true); }
-    function onEnd() { reveal(false); }
-    function onErr() { reveal(true); }   // nothing played, so nothing to dissolve
-
-    // timeupdate only fires every ~250ms, which is too coarse to hit the cue
-    // cleanly. Sleep most of the remaining gap, then re-check: converges to
-    // within a frame, and a stall just re-schedules instead of firing early.
+    // timeupdate only fires every ~250ms, too coarse to hit the cue cleanly.
+    // Sleep most of the remaining gap, then re-check: converges to within a
+    // frame, and a stall just re-schedules instead of firing early.
     function schedule() {
-      if (done) return;
-      const remain = (REVEAL_AT - video.currentTime) / RATE * 1000;
-      if (remain <= 16) return reveal(false);
+      if (live) return;
+      const remain = (CUT_AT - video.currentTime) / RATE * 1000;
+      if (remain <= 16) return goLive();
       clearTimeout(tick);
       tick = setTimeout(schedule, remain > 200 ? remain - 100 : remain);
     }
 
     video.playbackRate = RATE;
     video.addEventListener('playing', schedule);
-    video.addEventListener('timeupdate', schedule);   // backstop if playing is missed
-    video.addEventListener('ended', onEnd);
-    video.addEventListener('error', onErr);
-    SKIP_EVENTS.forEach(function (e) {
-      window.addEventListener(e, onSkip, { passive: true });
-    });
+    video.addEventListener('timeupdate', schedule);
+    video.addEventListener('ended', goLive);
+    video.addEventListener('error', goLive);    // decode / source failure -> live
+    // Any interaction resolves the cut at once — a scroll or click means "get on
+    // with it," and scrolling must not leave the headline un-staged.
+    SKIP.forEach(function (e) { window.addEventListener(e, goLive, { passive: true }); });
 
-    // Autoplay blocked (or any other play failure) must fall through to the
-    // hero — never strand someone on a black screen they can't dismiss.
     const p = video.play();
-    if (p && p.catch) p.catch(function () { reveal(true); });
-
-    timer = setTimeout(function () { reveal(true); }, BAIL_OUT);
+    if (p && p.catch) p.catch(goLive);          // autoplay blocked -> straight to live
+    timer = setTimeout(goLive, BAIL);
   })();
 
   // ============== FOOTER END SLATE ==============
