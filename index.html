@@ -220,6 +220,16 @@
   }
   .anim .preview-frame[data-rv-item].in { translate: none; scale: none; }
 
+  /* Preview workflow steps fly in from the right and settle left into place,
+     one at a time — a longer, more deliberate cascade (see the wider stagger on
+     the markup). Pure horizontal slide + fade; scale neutralized. */
+  .anim .preview-steps > li[data-rv-item] {
+    translate: 90px 0;
+    scale: 1;
+    transition: opacity .85s ease, translate 1s cubic-bezier(.16, .8, .28, 1);
+  }
+  .anim .preview-steps > li[data-rv-item].in { translate: none; }
+
   /* Line-by-line reveal for the big 3-line section titles. The lines stack
      always (unconditional display:block, so no-JS still breaks them); only the
      motion is gated on .anim. Each line rises + unblurs in sequence, and the
@@ -2096,7 +2106,7 @@
     </div>
 
     <!-- 5 numbered steps -->
-    <ol class="preview-steps" data-rv-stagger="90">
+    <ol class="preview-steps" data-rv-stagger="240">
       <li data-rv-item>
         <div class="preview-step-num">— Step 01</div>
         <h4>Send the address.</h4>
@@ -2326,7 +2336,7 @@
     <div data-rv style="font-family: var(--display-narrow); font-weight: 500; font-size: clamp(20px, 2.4vw, 32px); letter-spacing: -0.01em; color: var(--paper-2); margin-top: -8px; padding-bottom: 48px; border-bottom: 1px solid var(--rule);">
       Elevated perspectives. <span style="color: var(--red);">Elevated solutions.</span>
     </div>
-    <div class="footer-bottom" data-rv style="padding-top: 32px;">
+    <div class="footer-bottom" style="padding-top: 32px;">
       <div>Charlotte, NC · Est. 2024</div>
       <div class="center">© 2026 — All rights reserved</div>
       <div class="footer-social">
@@ -2509,7 +2519,7 @@
     // visible area, so its intersection ratio is 0 — with any positive threshold
     // the observer would never fire and the title would never unclip. Border-box
     // entry (threshold 0) still triggers; the negative bottom margin holds the
-    // reveal until the element is ~12% into view.
+    // reveal until the element is ~6% into view.
     const io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
@@ -2519,6 +2529,20 @@
     }, { threshold: 0, rootMargin: '0px 0px -6% 0px' });
 
     targets.forEach(function (el) { io.observe(el); });
+
+    // Bottom-of-page failsafe: the negative bottom margin creates a dead zone at
+    // the very end of the page — an element pinned there can never scroll far
+    // enough up to cross the trigger. When the viewport reaches within 160px of
+    // the bottom, reveal anything still waiting.
+    function revealTail() {
+      if (window.innerHeight + window.scrollY < document.documentElement.scrollHeight - 160) return;
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in')) { io.unobserve(el); reveal(el); }
+      });
+      window.removeEventListener('scroll', revealTail);
+    }
+    window.addEventListener('scroll', revealTail, { passive: true });
+    revealTail();   // in case the page is already at the bottom on load
   })();
 
 </script>
