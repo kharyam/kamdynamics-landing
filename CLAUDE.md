@@ -20,9 +20,9 @@ One page, no build system, no package manager, no dependencies. **All CSS and JS
   - `<head>`: meta/OG tags, JSON-LD `LocalBusiness` structured data, the intro-cut arming
     script, then one big `<style>` block
   - `<body>`: nav and sections in order — `#top` (hero, with the intro-cut logo slate inside it),
-    `#services-aerial`, `#preview` (the preview-before-flight workflow), `#editing`, `#about`,
-    `#also`, `#contact`, footer. (A hidden `.ticker` element still exists in the markup but is
-    `display:none` — see below.)
+    `#services-aerial`, a thin `.stats` proof strip (industry-data stats), `#preview` (the
+    preview-before-flight workflow), `#editing`, `#about`, `#also`, `#contact`, footer. (A hidden
+    `.ticker` element still exists in the markup but is `display:none` — see below.)
   - One `<script>` block at the bottom (~90 lines): nav scroll state, live timecode, portfolio
     flag, the in-hero intro cut, footer end slate
 - **images/** — brand and credential logos (SVG/PNG), `screenshots/` for the workflow montage,

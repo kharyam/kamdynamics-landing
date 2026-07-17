@@ -1096,6 +1096,63 @@
     letter-spacing: 0.12em;
   }
 
+  /* ============== PROOF STRIP ============== */
+  /* Industry-data "proof beat" bridging the aerial service and the preview
+     workflow. Reuses the site's language: rule separator, mono red eyebrow,
+     Archivo Narrow numbers, and the two-column-with-centre-rule pattern the
+     feature list uses. */
+  .stats {
+    border-top: 1px solid var(--rule);
+    background: var(--black-2);
+    padding: clamp(48px, 7vw, 72px) 40px;
+  }
+  .stats-inner { max-width: var(--max); margin: 0 auto; text-align: center; }
+  .stats-eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 28px 0 8px;
+  }
+  .stats-grid .stat:first-child { border-right: 1px solid var(--rule); }
+  .stat {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 14px;
+    padding: 8px 32px;
+  }
+  .stat-num {
+    font-family: var(--display-narrow);
+    font-weight: 700;
+    font-size: clamp(56px, 8vw, 104px);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--paper);
+  }
+  .stat-num .stat-unit { color: var(--red); }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--paper-2);
+    max-width: 26ch;
+    line-height: 1.5;
+  }
+  .stats-source {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-top: 8px;
+  }
+
   /* ============== PREVIEW WORKFLOW ============== */
   .preview {
     background: var(--black);
@@ -1725,6 +1782,14 @@
     .preview-steps { grid-template-columns: 1fr; }
     .preview-steps > li { border-right: none !important; }
     .preview-steps > li:last-child { border-bottom: none; }
+    /* proof strip stacks one-up, centre rule flips to a divider */
+    .stats-grid { grid-template-columns: 1fr; }
+    .stats-grid .stat:first-child {
+      border-right: none;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 28px;
+      margin-bottom: 20px;
+    }
   }
 </style>
 </head>
@@ -1868,6 +1933,24 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ============== PROOF STRIP ============== -->
+<section class="stats" aria-label="Why aerial listing media works">
+  <div class="stats-inner">
+    <div class="stats-eyebrow">— The evidence</div>
+    <div class="stats-grid">
+      <div class="stat">
+        <span class="stat-num">68<span class="stat-unit">%</span></span>
+        <span class="stat-label">Faster to sell — listings marketed with aerial photography</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">118<span class="stat-unit">%</span></span>
+        <span class="stat-label">More online views with professional listing photos</span>
+      </div>
+    </div>
+    <div class="stats-source">Industry data · aggregated real-estate marketing studies</div>
   </div>
 </section>
 
