@@ -38,6 +38,20 @@
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
+<!-- Arms the intro title card before first paint, so the hero never flashes
+     behind it. Runs synchronously and deliberately stays tiny. The card is
+     display:none unless this adds the class, which means no-JS visitors and
+     anything that throws here simply get the hero. -->
+<script>
+  (function () {
+    try {
+      var seen = sessionStorage.getItem('kam-intro-seen');
+      var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!seen && !still) document.documentElement.classList.add('intro-armed', 'intro-lock');
+    } catch (e) { /* private mode / storage blocked -> no card, hero as normal */ }
+  })();
+</script>
+
 <!-- Structured data: local drone photography business -->
 <script type="application/ld+json">
 {
@@ -135,6 +149,64 @@
   a { color: inherit; text-decoration: none; }
   img, svg, video { display: block; max-width: 100%; }
   ::selection { background: var(--red); color: var(--paper); }
+
+  /* ============== INTRO TITLE CARD ==============
+     Hidden by default. The head script adds .intro-armed to <html> only when
+     the card should play, so no-JS / unsupported browsers never see a black
+     overlay they can't dismiss. */
+  .intro { display: none; }
+  .intro-armed .intro {
+    display: grid;
+    place-items: center;
+    /* Sits the logo's centre at ~42% rather than 50%: geometric centre reads as
+       slightly low, so a title card wants to be a touch high. Done as padding
+       rather than a translate because .intro--out already owns the video's
+       transform, and a second one there would silently overwrite the scale. */
+    padding-bottom: 15vh;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    /* pure black to match the clip's own background exactly */
+    background: #000;
+    /* A long, even dissolve rather than a quick wipe: it starts while the logo
+       is still resolving, so the two overlap for well over a second. Eases in
+       and out so the logo holds briefly before washing and the page settles
+       rather than snapping. The backdrop can't fade separately from the logo —
+       screen blend needs the black to composite against, and without it the
+       clip's matte would render as a black box. */
+    transition: opacity 1.3s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+  /* Scroll lock is its own class, not .intro-armed: the reveal releases the
+     lock immediately but .intro-armed has to survive until the fade finishes,
+     since it carries the display:grid the transition needs. */
+  .intro-lock body { overflow: hidden; }
+  .intro-video {
+    width: min(70vw, 720px);
+    /* Width alone lets the mark eat a short viewport — on a landscape phone it
+       ran 84% of the height and, once lifted, sat 2px off the top edge. Capping
+       height keeps it clear of the edges; contain does the fitting, and the
+       letterbox it adds is invisible under the screen blend below. */
+    max-height: 60vh;
+    object-fit: contain;
+    /* the clip is matted on pure black; screen blend drops the matte entirely,
+       so no alpha channel / transparent WebM is needed */
+    mix-blend-mode: screen;
+    transition: transform 1.3s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+  .intro.intro--out { opacity: 0; pointer-events: none; }
+  /* drifts back a touch as it dissolves, so the logo recedes into the page
+     rather than the black simply being switched off over it */
+  .intro.intro--out .intro-video { transform: scale(1.04); }
+  /* A skip is a request to be done now — don't make someone sit through the
+     unhurried version of a thing they just dismissed. */
+  .intro.intro--fast, .intro.intro--fast .intro-video { transition-duration: .26s; }
+
+  /* Reduced motion: the card never arms (see head script) and the end slate
+     never plays — its poster is the resolved logo, so it stays meaningful. */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .intro { display: none !important; }
+  }
 
   /* ============== TICKER STRIP TOP ============== */
   .ticker {
@@ -1554,21 +1626,18 @@
     max-width: var(--max); margin: 0 auto;
     padding: 0 40px;
   }
-  .footer-mark {
-    font-family: var(--display-narrow);
-    font-weight: 700;
-    font-size: clamp(80px, 14vw, 220px);
-    line-height: 0.88;
-    text-transform: uppercase;
-    letter-spacing: -0.04em;
-    -webkit-text-stroke: 2px var(--paper);
-    color: transparent;
+  /* End slate — same sting as the intro. The clip is cropped tight to the
+     artwork, so its edges are the logo's edges and it needs no alignment
+     nudge. Keeps the spacing + rule the outline mark used to carry. */
+  .footer-slate-wrap {
     padding-bottom: 32px;
     border-bottom: 1px solid var(--rule);
     margin-bottom: 32px;
-    word-break: break-word;
   }
-  .footer-mark span { color: var(--red); -webkit-text-stroke: 0; }
+  .footer-slate {
+    width: min(100%, 620px);
+    mix-blend-mode: screen;
+  }
   .footer-bottom {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -1619,7 +1688,19 @@
     .preview-inner { padding: 0 24px; }
     .preview-head { margin-bottom: 48px; }
     .preview-montage { grid-template-columns: 1fr; gap: 24px; margin-bottom: 64px; }
-    .preview-frame-img { height: 240px; }
+    /* These are screenshots, not decorative photography — cropping them costs
+       information. The desktop montage trades that for a tidy 3-up grid, but a
+       single column has no alignment to keep, so let each one show whole at its
+       own aspect. Matters most for the portrait package PDF, which a fixed
+       240px box cut off at 55%.
+       The cap stops that same PDF from running to ~1250px on a wide tablet
+       column; past it, contain letterboxes against the frame instead of
+       cropping, so nothing is ever lost. */
+    .preview-frame-img {
+      height: auto;
+      max-height: 640px;
+      object-fit: contain;
+    }
     .editing { padding: 80px 0 60px; }
     .editing-inner { padding: 0 24px; }
     .editing-head { margin-bottom: 40px; }
@@ -1639,6 +1720,17 @@
 </style>
 </head>
 <body data-portfolio="on">
+
+<!-- ============== INTRO TITLE CARD ==============
+     No poster: the still is the *end* of the animation, so using it here would
+     spoil the reveal and hand the overlay a large LCP candidate. The card's
+     black background already matches frame one. No autoplay attribute either —
+     JS calls play() so a blocked-autoplay rejection is catchable. -->
+<div class="intro" id="intro" aria-hidden="true">
+  <video class="intro-video" id="introVideo" muted playsinline preload="auto">
+    <source src="videos/kam-logo-sting.mp4" type="video/mp4">
+  </video>
+</div>
 
 <!-- ============== TICKER (trust/value bar) ============== -->
 <div class="ticker" aria-hidden="true">
@@ -1681,7 +1773,9 @@
 <!-- ============== HERO ============== -->
 <section class="hero" id="top">
   <div class="hero-bg">
-    <video class="hero-video" autoplay muted loop playsinline>
+    <!-- preload=auto so this is buffered while the intro card plays, and the
+         wipe reveals a hero that is already running rather than popping in -->
+    <video class="hero-video" autoplay muted loop playsinline preload="auto">
       <source src="videos/house-bg-clip.mp4" type="video/mp4">
     </video>
     <div class="hero-sun"></div>
@@ -2023,7 +2117,12 @@
 <!-- ============== FOOTER ============== -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-mark">KAM <span>·</span> DYNAMICS</div>
+    <div class="footer-slate-wrap">
+      <video class="footer-slate" id="footerSlate" poster="images/kam-logo-still.png" muted playsinline preload="none">
+        <source src="videos/kam-logo-sting.mp4" type="video/mp4">
+        <img src="images/kam-logo-still.png" alt="KAM Dynamics">
+      </video>
+    </div>
     <div style="font-family: var(--display-narrow); font-weight: 500; font-size: clamp(20px, 2.4vw, 32px); letter-spacing: -0.01em; color: var(--paper-2); margin-top: -8px; padding-bottom: 48px; border-bottom: 1px solid var(--rule);">
       Elevated perspectives. <span style="color: var(--red);">Elevated solutions.</span>
     </div>
@@ -2070,6 +2169,112 @@
   // Portfolio feature flag
   const params = new URLSearchParams(location.search);
   if (params.get('portfolio') === 'on') document.body.dataset.portfolio = 'on';
+
+  // ============== INTRO TITLE CARD ==============
+  // Beats of the sting, in media seconds: the streak draws to ~1.6, the KAM
+  // mark resolves by ~2.1, a quiet beat to ~2.77, the wordmark fades in, and
+  // it locks at 3.25. The page fade starts at 2.55 — once the mark has formed
+  // but before the wordmark lands — and runs 1.3s, so the logo finishes
+  // resolving while the page is already rising behind it. Starting earlier pays
+  // for the longer fade: time-to-hero is 2.55 / 1.15 = 2.22s + 1.3s ≈ 3.6s,
+  // the same as the old short wipe that began at the lock.
+  (function () {
+    const intro = document.getElementById('intro');
+    if (!intro || !document.documentElement.classList.contains('intro-armed')) return;
+
+    const video = document.getElementById('introVideo');
+    const RATE = 1.15;          // imperceptible on a sting, buys ~0.4s
+    const REVEAL_AT = 2.55;     // media seconds: overlap the logo's final act
+    const FADE = 1300;          // must match the .intro transition duration
+    const FADE_FAST = 260;      // must match .intro--fast
+    // Hard ceiling from script start. Every bail-out — this, a play() rejection,
+    // a decode error — takes the fast fade: if the sting never ran there is
+    // nothing to dissolve gracefully, and being behind is the wrong moment to
+    // linger. That keeps the worst case (3.1s + 0.26s) well inside budget while
+    // leaving the normal cue at ~2.6s a real margin, so a slow-starting video
+    // doesn't get its logo chopped by a watchdog racing the happy path.
+    const BAIL_OUT = 3100;
+    const SKIP_EVENTS = ['click', 'touchstart', 'keydown', 'wheel', 'scroll'];
+
+    let done = false;
+    let timer = null;
+    let tick = null;
+
+    function reveal(fast) {
+      if (done) return;         // skip + scheduler + ended can all race here
+      done = true;
+      clearTimeout(timer);
+      clearTimeout(tick);
+      SKIP_EVENTS.forEach(function (e) { window.removeEventListener(e, onSkip); });
+      video.removeEventListener('playing', schedule);
+      video.removeEventListener('timeupdate', schedule);
+      video.removeEventListener('ended', onEnd);
+      video.removeEventListener('error', onErr);
+
+      try { sessionStorage.setItem('kam-intro-seen', '1'); } catch (e) {}
+
+      if (fast) intro.classList.add('intro--fast');
+      intro.classList.add('intro--out');
+      document.documentElement.classList.remove('intro-lock');   // scroll usable at once
+      setTimeout(function () {
+        video.pause();
+        intro.remove();         // removing the node retires .intro-armed's rule
+        document.documentElement.classList.remove('intro-armed');
+      }, (fast ? FADE_FAST : FADE) + 60);   // just past the CSS transition
+    }
+
+    // Every listener goes through a wrapper: bound directly, each would hand
+    // reveal() its Event as `fast`, and an object is truthy — so the gentle
+    // fade would never run.
+    function onSkip() { reveal(true); }
+    function onEnd() { reveal(false); }
+    function onErr() { reveal(true); }   // nothing played, so nothing to dissolve
+
+    // timeupdate only fires every ~250ms, which is too coarse to hit the cue
+    // cleanly. Sleep most of the remaining gap, then re-check: converges to
+    // within a frame, and a stall just re-schedules instead of firing early.
+    function schedule() {
+      if (done) return;
+      const remain = (REVEAL_AT - video.currentTime) / RATE * 1000;
+      if (remain <= 16) return reveal(false);
+      clearTimeout(tick);
+      tick = setTimeout(schedule, remain > 200 ? remain - 100 : remain);
+    }
+
+    video.playbackRate = RATE;
+    video.addEventListener('playing', schedule);
+    video.addEventListener('timeupdate', schedule);   // backstop if playing is missed
+    video.addEventListener('ended', onEnd);
+    video.addEventListener('error', onErr);
+    SKIP_EVENTS.forEach(function (e) {
+      window.addEventListener(e, onSkip, { passive: true });
+    });
+
+    // Autoplay blocked (or any other play failure) must fall through to the
+    // hero — never strand someone on a black screen they can't dismiss.
+    const p = video.play();
+    if (p && p.catch) p.catch(function () { reveal(true); });
+
+    timer = setTimeout(function () { reveal(true); }, BAIL_OUT);
+  })();
+
+  // ============== FOOTER END SLATE ==============
+  // Plays once per page view, not on every re-entry into the viewport.
+  (function () {
+    const slate = document.getElementById('footerSlate');
+    if (!slate || !('IntersectionObserver' in window)) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;  // poster stands in
+
+    const obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        obs.unobserve(entry.target);   // before play(), so it can only fire once
+        entry.target.play().catch(function () {});  // poster remains on failure
+      });
+    }, { threshold: 0.4 });
+
+    obs.observe(slate);
+  })();
 
 </script>
 </body>
