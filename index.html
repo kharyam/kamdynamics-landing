@@ -38,18 +38,24 @@
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
-<!-- Arms the in-hero intro cut before first paint: the logo plays in the hero
-     background, cross-dissolves to the drone footage, and the headline stages
-     in. Gated to once per session and skipped under reduced-motion — in both
-     cases the hero renders fully composed with no logo phase. Synchronous and
-     tiny so there's no flash of the un-staged headline before it arms. -->
+<!-- Arms motion before first paint. `.anim` turns on the scroll-reveal system
+     and the hero headline animation (so both hide their targets before paint,
+     no flash). `.hero-cut` additionally runs the once-per-session logo intro.
+     Both are skipped under reduced-motion. A failsafe clears `.anim` if the
+     reveal JS never initializes, so nothing can stay permanently hidden. -->
 <script>
   (function () {
+    var root = document.documentElement;
     try {
       var seen = sessionStorage.getItem('kam-intro-seen');
       var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!seen && !still) document.documentElement.classList.add('hero-cut');
-    } catch (e) { /* storage blocked / unsupported -> straight to the live hero */ }
+      if (!still) {
+        root.classList.add('anim');
+        if (!seen) root.classList.add('hero-cut');
+        // If the reveal script never runs (JS error), reveal everything.
+        setTimeout(function () { if (!window.__rvReady) root.classList.remove('anim'); }, 3000);
+      }
+    } catch (e) { /* blocked / unsupported -> no motion, everything visible */ }
   })();
 </script>
 
@@ -156,6 +162,106 @@
      scrolling. The in-hero cut styling lives with the hero, further down. */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
+  }
+
+  /* ============== SCROLL REVEAL ==============
+     Elements marked data-rv (or data-rv-item inside a data-rv-stagger group)
+     start hidden and animate in when scrolled into view. Only active while
+     <html> has .anim (motion allowed + reveal JS ready), so no-JS / reduced
+     motion / any failsafe leaves everything visible. Transform + opacity +
+     clip-path only — never anything that reflows, so no layout shift. */
+  /* Uses the individual `translate`/`scale` properties (not `transform`) so a
+     revealed element's hover `transform` — e.g. the preview-frame lift — still
+     composes rather than getting clobbered by the .in state. Kept at plain
+     [data-rv] specificity (0,2,0) so the .in reveal (0,3,0) always wins; the
+     clip/lines variants override this generic hidden state via later, equal-
+     specificity rules rather than a :not() that would out-specify .in. */
+  .anim [data-rv],
+  .anim [data-rv-item] {
+    opacity: 0;
+    translate: 0 42px;
+    scale: .95;
+    transition: opacity .8s ease, translate .95s cubic-bezier(.16, .8, .28, 1),
+                scale .95s cubic-bezier(.16, .8, .28, 1);
+    will-change: opacity, translate, scale;
+  }
+  .anim [data-rv].in,
+  .anim [data-rv-item].in {
+    opacity: 1;
+    translate: none;
+    scale: none;
+  }
+  /* directional variants — pure slide, scale neutralized so big panels don't
+     also shrink. */
+  .anim [data-rv="left"]  { translate: -72px 0; scale: 1; }
+  .anim [data-rv="right"] { translate: 72px 0; scale: 1; }
+  .anim [data-rv="scale"] { translate: 0 24px; scale: .9; }
+  /* clip wipe (left → right) — used on the shorter one/two-line titles. Resets
+     the generic hidden opacity/translate/scale (later, equal specificity). */
+  .anim [data-rv="clip"] {
+    opacity: 1;
+    translate: none;
+    scale: 1;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 1s cubic-bezier(.7, 0, .2, 1);
+  }
+  .anim [data-rv="clip"].in { clip-path: inset(0 0 0 0); }
+  /* lines: the h2 box itself stays visible; only its .tl-line children animate. */
+  .anim [data-rv="lines"] { opacity: 1; translate: none; scale: 1; }
+
+  /* Montage frames (the "pictures") get the most motion — a long slide up and a
+     deeper scale-in. The matching .in rule is (0,4,0), so it always wins back
+     to the resting state. */
+  .anim .preview-frame[data-rv-item] {
+    translate: 0 78px;
+    scale: .88;
+    transition: opacity .95s ease, translate 1.15s cubic-bezier(.16, .8, .28, 1),
+                scale 1.15s cubic-bezier(.16, .8, .28, 1);
+  }
+  .anim .preview-frame[data-rv-item].in { translate: none; scale: none; }
+
+  /* Line-by-line reveal for the big 3-line section titles. The lines stack
+     always (unconditional display:block, so no-JS still breaks them); only the
+     motion is gated on .anim. Each line rises + unblurs in sequence, and the
+     middle "action" line (.tl-accent) pops in bigger with a slight overshoot,
+     so it lands with more weight than the two lines bracketing it. */
+  .tl-line { display: block; }
+  .anim [data-rv="lines"] .tl-line {
+    opacity: 0;
+    translate: 0 0.5em;
+    filter: blur(6px);
+    transition: opacity 1s ease, translate 1.15s cubic-bezier(.16, .8, .28, 1),
+                filter .9s ease;
+  }
+  .anim [data-rv="lines"].in .tl-line { opacity: 1; translate: none; filter: none; }
+  /* wide gaps so line 3 lands well after the title enters — long enough to be
+     scrolled into view before it animates, not finished off-screen */
+  .anim [data-rv="lines"].in .tl-line:nth-child(1) { transition-delay: .05s; }
+  .anim [data-rv="lines"].in .tl-line:nth-child(2) { transition-delay: .34s; }
+  .anim [data-rv="lines"].in .tl-line:nth-child(3) { transition-delay: .64s; }
+  /* accent line — defined AFTER .tl-line so it wins on equal specificity */
+  .anim [data-rv="lines"] .tl-accent {
+    translate: 0 0.14em;
+    scale: .78;
+    transform-origin: left center;
+    transition: opacity .7s ease, translate 1.05s cubic-bezier(.2, .85, .3, 1.25),
+                scale 1.05s cubic-bezier(.2, .85, .3, 1.25), filter .6s ease;
+  }
+  .anim [data-rv="lines"].in .tl-accent { scale: 1; }
+
+  /* Belt-and-suspenders: if the OS pref flips on after load, don't trap
+     anything mid-hidden. (.anim isn't added under reduced motion anyway.) */
+  @media (prefers-reduced-motion: reduce) {
+    .anim [data-rv],
+    .anim [data-rv-item],
+    .anim [data-rv="lines"] .tl-line {
+      opacity: 1 !important;
+      translate: none !important;
+      scale: none !important;
+      clip-path: none !important;
+      filter: none !important;
+      transition: none !important;
+    }
   }
 
   /* ============== TICKER STRIP TOP ============== */
@@ -307,11 +413,12 @@
     opacity: 0.6;
   }
   .hero-cut.is-live .hero-slate { opacity: 0; pointer-events: none; }
-  /* ONLY the three headline lines wait — everything else (nav, HUD, the meta
-     row, the lede, the CTAs, the logo footage) stays composed the whole time,
-     so the page never feels captive. At the cut (is-live) the lines rise,
-     unblur and fade up one at a time over the drone footage. */
-  .hero-cut #hero-h1 .hl {
+  /* The three headline lines stage in one at a time — rise, unblur, fade up.
+     Scoped to .anim (not .hero-cut) so it plays on EVERY motion-allowed load:
+     during the intro cut it fires at is-live (the cut); with no intro cut
+     (repeat visit) is-live is added on load, so the headline still animates.
+     Everything else in the hero stays composed the whole time. */
+  .anim #hero-h1 .hl {
     opacity: 0;
     transform: translateY(0.26em);
     filter: blur(6px);
@@ -319,11 +426,11 @@
                 filter .7s ease;
     will-change: opacity, transform, filter;
   }
-  .hero-cut.is-live #hero-h1 .hl { opacity: 1; transform: none; filter: none; }
+  .anim.is-live #hero-h1 .hl { opacity: 1; transform: none; filter: none; }
   /* one line at a time */
-  .hero-cut.is-live #hero-h1 .hl:nth-child(1) { transition-delay: .05s; }
-  .hero-cut.is-live #hero-h1 .hl:nth-child(2) { transition-delay: .29s; }
-  .hero-cut.is-live #hero-h1 .hl:nth-child(3) { transition-delay: .53s; }
+  .anim.is-live #hero-h1 .hl:nth-child(1) { transition-delay: .05s; }
+  .anim.is-live #hero-h1 .hl:nth-child(2) { transition-delay: .29s; }
+  .anim.is-live #hero-h1 .hl:nth-child(3) { transition-delay: .53s; }
   /* The nav brand (mark + "KAM Dynamics") also waits — no sense showing the
      wordmark in the corner while the logo itself is playing full-size behind
      the hero. It fades in with the headline. Opacity only, so its slot in the
@@ -1904,7 +2011,7 @@
 
 <!-- ============== SERVICES ============== -->
 <section class="service" id="services-aerial">
-  <div class="service-vis service-vis-aerial">
+  <div class="service-vis service-vis-aerial" data-rv="left">
     <video class="service-vis-video" autoplay muted loop playsinline>
       <source src="videos/house-bg-clip.mp4" type="video/mp4">
     </video>
@@ -1912,19 +2019,19 @@
     <div class="service-vis-tc">00:01:14 · F/4 · 1/240</div>
   </div>
   <div class="service-text">
-    <div class="service-num">— 01 / The drone work</div>
-    <h3>Aerial coverage<br>for real estate.</h3>
-    <p>FAA Part&nbsp;107 commercial drone work based in Charlotte. Every shoot is insured and flown to a documented checklist, then delivered as color-graded, listing-ready video and stills.</p>
-    <ul class="service-feats">
-      <li>Fully insured</li>
-      <li>4K aerial video</li>
-      <li>Aerial listing stills</li>
-      <li>Twilight &amp; blue-hour shoots</li>
-      <li>Social-ready vertical exports</li>
-      <li>Color grade &amp; delivery</li>
-      <li>Fast turnaround · rush available</li>
+    <div class="service-num" data-rv>— 01 / The drone work</div>
+    <h3 data-rv="clip">Aerial coverage<br>for real estate.</h3>
+    <p data-rv>FAA Part&nbsp;107 commercial drone work based in Charlotte. Every shoot is insured and flown to a documented checklist, then delivered as color-graded, listing-ready video and stills.</p>
+    <ul class="service-feats" data-rv-stagger="70">
+      <li data-rv-item>Fully insured</li>
+      <li data-rv-item>4K aerial video</li>
+      <li data-rv-item>Aerial listing stills</li>
+      <li data-rv-item>Twilight &amp; blue-hour shoots</li>
+      <li data-rv-item>Social-ready vertical exports</li>
+      <li data-rv-item>Color grade &amp; delivery</li>
+      <li data-rv-item>Fast turnaround · rush available</li>
     </ul>
-    <div class="service-creds">
+    <div class="service-creds" data-rv>
       <div class="cert-badge">
         <img src="images/faa-logo.svg" alt="FAA">
         <div class="cert-badge-text">
@@ -1938,19 +2045,19 @@
 
 <!-- ============== PROOF STRIP ============== -->
 <section class="stats" aria-label="Why aerial listing media works">
-  <div class="stats-inner">
-    <div class="stats-eyebrow">— The evidence</div>
-    <div class="stats-grid">
+  <div class="stats-inner" data-rv-stagger="120">
+    <div class="stats-eyebrow" data-rv-item>— The evidence</div>
+    <div class="stats-grid" data-rv-item>
       <div class="stat">
-        <span class="stat-num">68<span class="stat-unit">%</span></span>
+        <span class="stat-num"><span class="stat-val" data-count="68">68</span><span class="stat-unit">%</span></span>
         <span class="stat-label">Faster to sell — listings marketed with aerial photography</span>
       </div>
       <div class="stat">
-        <span class="stat-num">118<span class="stat-unit">%</span></span>
+        <span class="stat-num"><span class="stat-val" data-count="118">118</span><span class="stat-unit">%</span></span>
         <span class="stat-label">More online views with professional listing photos</span>
       </div>
     </div>
-    <div class="stats-source">Industry data · aggregated real-estate marketing studies</div>
+    <div class="stats-source" data-rv-item>Industry data · aggregated real-estate marketing studies</div>
   </div>
 </section>
 
@@ -1958,30 +2065,30 @@
 <section class="preview" id="preview">
   <div class="preview-inner">
     <div class="preview-head">
-      <div class="preview-num">02 / The preview workflow</div>
-      <h2 class="preview-h2">
-        See the shoot<br>
-        <span class="red-block"><span>before</span></span><br>
-        <span class="stroke">you book it.</span>
+      <div class="preview-num" data-rv>02 / The preview workflow</div>
+      <h2 class="preview-h2" data-rv="lines">
+        <span class="tl-line">See the shoot</span>
+        <span class="tl-line tl-accent"><span class="red-block"><span>before</span></span></span>
+        <span class="tl-line"><span class="stroke">you book it.</span></span>
       </h2>
-      <p class="preview-lede">
+      <p class="preview-lede" data-rv>
         Most operators send a quote and hope for the best. We send a quote <em>and</em> a photorealistic preview of the planned shoot, so you can approve the angles, altitudes, and framing before flight day.
       </p>
     </div>
 
     <!-- Three-image montage band -->
-    <div class="preview-montage">
-      <figure class="preview-frame">
+    <div class="preview-montage" data-rv-stagger="500">
+      <figure class="preview-frame" data-rv-item>
         <div class="preview-frame-tag">Plan</div>
         <img class="preview-frame-img" src="images/screenshots/01-mission-planning.png" alt="Mission planning interface showing planned drone patterns on a Charlotte property">
         <figcaption>Mission planning · patterns plotted on the actual property</figcaption>
       </figure>
-      <figure class="preview-frame">
+      <figure class="preview-frame" data-rv-item>
         <div class="preview-frame-tag">Preview</div>
         <img class="preview-frame-img" src="images/screenshots/02-preview-render.png" alt="Photorealistic render of a planned drone shot">
         <figcaption>Photorealistic render · what each captured photo will look like</figcaption>
       </figure>
-      <figure class="preview-frame">
+      <figure class="preview-frame" data-rv-item>
         <div class="preview-frame-tag">Deliver</div>
         <img class="preview-frame-img" src="images/screenshots/03-customer-package.png" alt="Customer mission preview package PDF with branded layout">
         <figcaption>Mission preview package · branded deliverable, sent before flight</figcaption>
@@ -1989,28 +2096,28 @@
     </div>
 
     <!-- 5 numbered steps -->
-    <ol class="preview-steps">
-      <li>
+    <ol class="preview-steps" data-rv-stagger="90">
+      <li data-rv-item>
         <div class="preview-step-num">— Step 01</div>
         <h4>Send the address.</h4>
         <p>We check airspace, parcel boundaries, neighborhood elevation, and FAA compliance before we quote a price.</p>
       </li>
-      <li>
+      <li data-rv-item>
         <div class="preview-step-num">— Step 02</div>
         <h4>Mission planned in custom software.</h4>
         <p>We plan the mission in <em>custom software we built in-house</em>, framing every shot for angle, altitude, coverage, and sequence.</p>
       </li>
-      <li>
+      <li data-rv-item>
         <div class="preview-step-num">— Step 03</div>
         <h4>Preview video to approve.</h4>
         <p>You receive a photorealistic render of the shoot before flight day. Approve the framing or send notes, and we revise until it's right.</p>
       </li>
-      <li>
+      <li data-rv-item>
         <div class="preview-step-num">— Step 04</div>
         <h4>We fly the approved mission.</h4>
         <p>FAA Part&nbsp;107, documented checklist, fully insured for every shoot. The drone executes the plan you already approved.</p>
       </li>
-      <li>
+      <li data-rv-item>
         <div class="preview-step-num">— Step 05</div>
         <h4>You receive the package.</h4>
         <p>Your agreed-upon deliverables, professionally edited and color-graded, ready to list. Fast turnaround on every shoot, with rush delivery available.</p>
@@ -2023,34 +2130,34 @@
 <section class="editing" id="editing">
   <div class="editing-inner">
     <div class="editing-head">
-      <div class="preview-num">03 / The finishing pass</div>
-      <h2 class="preview-h2">
-        Shot on site.<br>
-        <span class="red-block"><span>Finished</span></span><br>
-        <span class="stroke">in post.</span>
+      <div class="preview-num" data-rv>03 / The finishing pass</div>
+      <h2 class="preview-h2" data-rv="lines">
+        <span class="tl-line">Shot on site.</span>
+        <span class="tl-line tl-accent"><span class="red-block"><span>Finished</span></span></span>
+        <span class="tl-line"><span class="stroke">in post.</span></span>
       </h2>
-      <p class="editing-lede">
+      <p class="editing-lede" data-rv>
         The capture is only half the work. Every image is professionally edited and color-graded to a clean, listing-ready finish &mdash; and for the listings that deserve a showpiece, we offer dramatic twilight shots that stop the scroll.
       </p>
     </div>
 
     <!-- Three-shot montage: original → standard grade → twilight -->
-    <div class="preview-montage">
-      <figure class="preview-frame">
+    <div class="preview-montage" data-rv-stagger="500">
+      <figure class="preview-frame" data-rv-item>
         <div class="preview-frame-tag">01 · Original</div>
         <div class="edit-ph">
           <div class="edit-ph-label"><strong>Original shot</strong>As captured on site<br>placeholder</div>
         </div>
         <figcaption>As captured · reference frame</figcaption>
       </figure>
-      <figure class="preview-frame">
+      <figure class="preview-frame" data-rv-item>
         <div class="preview-frame-tag">02 · Standard edit</div>
         <div class="edit-ph">
           <div class="edit-ph-label"><strong>Standard edit</strong>Professionally edited<br>placeholder</div>
         </div>
         <figcaption>Professionally edited · balanced &amp; listing-ready</figcaption>
       </figure>
-      <figure class="preview-frame">
+      <figure class="preview-frame" data-rv-item>
         <div class="preview-frame-tag">03 · Twilight</div>
         <div class="edit-ph twilight">
           <div class="edit-ph-label"><strong>Twilight</strong>Premium golden-hour finish<br>placeholder</div>
@@ -2064,15 +2171,15 @@
 <!-- ============== ABOUT ============== -->
 <section class="about" id="about">
   <div class="about-hero">
-    <div class="about-eyebrow">— 04 / The operator</div>
-    <h1 class="about-h2">
-      Nothing<br>
-      <span class="red">here is</span><br>
-      <span class="stroke">Improvised.</span>
+    <div class="about-eyebrow" data-rv>— 04 / The operator</div>
+    <h1 class="about-h2" data-rv="lines">
+      <span class="tl-line">Nothing</span>
+      <span class="tl-line tl-accent"><span class="red">here is</span></span>
+      <span class="tl-line"><span class="stroke">Improvised.</span></span>
     </h1>
 
     <div class="about-grid">
-      <div style="position: relative;">
+      <div style="position: relative;" data-rv="left">
         <div class="about-portrait-tape">REEL · KAM</div>
         <div class="about-portrait">
           <div class="about-portrait-overlay">
@@ -2081,24 +2188,24 @@
           </div>
         </div>
       </div>
-      <div class="about-content">
-        <div class="about-role">— Founder &amp; FAA Part 107 Pilot</div>
-        <h2 class="about-name">Khary A. Mendez</h2>
-        <p class="about-bio">
+      <div class="about-content" data-rv-stagger="90">
+        <div class="about-role" data-rv-item>— Founder &amp; FAA Part 107 Pilot</div>
+        <h2 class="about-name" data-rv-item>Khary A. Mendez</h2>
+        <p class="about-bio" data-rv-item>
           I've spent the last <strong>couple of decades</strong> in enterprise technology, architecting cloud-native platforms for large engineering teams. After earning my FAA Part&nbsp;107 commercial certification, I built KAM Dynamics to bring that same discipline to the air.
         </p>
-        <p class="about-bio">
+        <p class="about-bio" data-rv-item>
           That means every shoot is <strong>planned in advance, flown against a checklist, and delivered the same way every time</strong> &mdash; no surprises on your end. I even wrote my own mission-planning software so you can preview the shoot before approving the bid, because hiring a drone pilot shouldn't be a gamble on whoever shows up.
         </p>
 
-        <div class="badges-row">
+        <div class="badges-row" data-rv-item>
           <span class="b b-red">FAA Part 107</span>
           <span class="b">Fully Insured</span>
           <span class="b">20+ yrs engineering</span>
           <a class="b" href="https://droners.io/accounts/d7ip-eu4g/" target="_blank" rel="noopener">Droners.io ↗</a>
         </div>
 
-        <p class="about-tech-pointer">
+        <p class="about-tech-pointer" data-rv-item>
           Cloud architecture engagements run separately at <a href="https://khary.net" target="_blank" rel="noopener">khary.net&nbsp;↗</a>
         </p>
       </div>
@@ -2133,18 +2240,18 @@
 <section class="also" id="also">
   <div class="also-inner">
     <div class="also-lead">
-      <div class="also-eyebrow">Beyond the listing</div>
-      <h3>Real estate is the specialty &mdash; not the limit.</h3>
-      <p>Need eyes on a roof, monthly progress on a build, or aerial content for social? It's the same flight-planned, professionally edited workflow, pointed somewhere new.</p>
+      <div class="also-eyebrow" data-rv>Beyond the listing</div>
+      <h3 data-rv="clip">Real estate is the specialty &mdash; not the limit.</h3>
+      <p data-rv>Need eyes on a roof, monthly progress on a build, or aerial content for social? It's the same flight-planned, professionally edited workflow, pointed somewhere new.</p>
     </div>
     <div class="also-side">
-      <div class="also-tags">
-        <span class="also-tag">Roof &amp; property inspections</span>
-        <span class="also-tag">Construction progress</span>
-        <span class="also-tag">Social media content</span>
-        <span class="also-tag">Events &amp; one-offs</span>
+      <div class="also-tags" data-rv-stagger="70">
+        <span class="also-tag" data-rv-item>Roof &amp; property inspections</span>
+        <span class="also-tag" data-rv-item>Construction progress</span>
+        <span class="also-tag" data-rv-item>Social media content</span>
+        <span class="also-tag" data-rv-item>Events &amp; one-offs</span>
       </div>
-      <a class="also-invite" href="#contact">
+      <a class="also-invite" href="#contact" data-rv>
         Got a creative drone project in mind? I'd love to hear it
         <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12H19M19 12L13 6M19 12L13 18"/></svg>
       </a>
@@ -2159,46 +2266,46 @@
   <div class="contact-bg"></div>
   <div class="contact-inner">
     <div class="contact-head">
-      <h2>Tell me<br>about<br>your<br><span class="stroke">project.</span></h2>
-      <span style="font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.85;">— Response within 1–2 business days</span>
+      <h2 data-rv="clip">Tell me<br>about<br>your<br><span class="stroke">project.</span></h2>
+      <span data-rv style="font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.85;">— Response within 1–2 business days</span>
     </div>
 
     <div class="contact-grid">
-      <div class="contact-list">
-        <a class="contact-row" href="mailto:info@kamdynamics.com">
+      <div class="contact-list" data-rv-stagger="80">
+        <a class="contact-row" href="mailto:info@kamdynamics.com" data-rv-item>
           <span class="contact-row-label">— Email</span>
           <span class="contact-row-val">info@kamdynamics.com</span>
           <span class="contact-row-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg></span>
         </a>
-        <a class="contact-row" href="tel:+17047501753">
+        <a class="contact-row" href="tel:+17047501753" data-rv-item>
           <span class="contact-row-label">— Phone</span>
           <span class="contact-row-val">704·750·1753</span>
           <span class="contact-row-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg></span>
         </a>
-        <a class="contact-row" href="#">
+        <a class="contact-row" href="#" data-rv-item>
           <span class="contact-row-label">— Serving</span>
           <span class="contact-row-val">Greater Charlotte · NC &amp; SC</span>
           <span class="contact-row-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg></span>
         </a>
-        <a class="contact-row" href="https://khary.net" target="_blank" rel="noopener">
+        <a class="contact-row" href="https://khary.net" target="_blank" rel="noopener" data-rv-item>
           <span class="contact-row-label">— Personal</span>
           <span class="contact-row-val">khary.net</span>
           <span class="contact-row-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg></span>
         </a>
       </div>
 
-      <form class="form" action="https://formsubmit.co/9a50cbabf0f6b47ea769a1be011a8f8c" method="POST">
+      <form class="form" action="https://formsubmit.co/9a50cbabf0f6b47ea769a1be011a8f8c" method="POST" data-rv-stagger="80">
         <input type="text" name="_honey" style="display:none">
         <input type="hidden" name="_captcha" value="true">
         <input type="hidden" name="_next" value="https://www.kamdynamics.com">
         <input type="hidden" name="_subject" value="New inquiry from KAM Dynamics website">
-        <div class="form-row">
+        <div class="form-row" data-rv-item>
           <div class="field"><label>— Name</label><input type="text" name="name" placeholder="Your name" required></div>
           <div class="field"><label>— Email</label><input type="email" name="email" placeholder="you@email.com" required></div>
         </div>
-        <div class="field"><label>— Project</label><input type="text" name="project" placeholder="Listing? Construction? Something else?"></div>
-        <div class="field"><label>— Details</label><textarea name="message" placeholder="Scope, timeline, what you have in mind…" required></textarea></div>
-        <button type="submit">
+        <div class="field" data-rv-item><label>— Project</label><input type="text" name="project" placeholder="Listing? Construction? Something else?"></div>
+        <div class="field" data-rv-item><label>— Details</label><textarea name="message" placeholder="Scope, timeline, what you have in mind…" required></textarea></div>
+        <button type="submit" data-rv-item>
           Send message
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12H19M19 12L13 6M19 12L13 18"/></svg>
         </button>
@@ -2216,10 +2323,10 @@
         <img src="images/kam-logo-still.png" alt="KAM Dynamics">
       </video>
     </div>
-    <div style="font-family: var(--display-narrow); font-weight: 500; font-size: clamp(20px, 2.4vw, 32px); letter-spacing: -0.01em; color: var(--paper-2); margin-top: -8px; padding-bottom: 48px; border-bottom: 1px solid var(--rule);">
+    <div data-rv style="font-family: var(--display-narrow); font-weight: 500; font-size: clamp(20px, 2.4vw, 32px); letter-spacing: -0.01em; color: var(--paper-2); margin-top: -8px; padding-bottom: 48px; border-bottom: 1px solid var(--rule);">
       Elevated perspectives. <span style="color: var(--red);">Elevated solutions.</span>
     </div>
-    <div class="footer-bottom" style="padding-top: 32px;">
+    <div class="footer-bottom" data-rv style="padding-top: 32px;">
       <div>Charlotte, NC · Est. 2024</div>
       <div class="center">© 2026 — All rights reserved</div>
       <div class="footer-social">
@@ -2274,7 +2381,16 @@
   // headline hidden or the logo stuck on screen.
   (function () {
     const root = document.documentElement;
-    if (!root.classList.contains('hero-cut')) return;   // repeat visit / reduced motion / no JS
+    if (!root.classList.contains('hero-cut')) {
+      // No intro cut this load (repeat visit). If motion is on, animate the
+      // headline in now — a couple of frames after paint so the transition runs.
+      if (root.classList.contains('anim')) {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { root.classList.add('is-live'); });
+        });
+      }
+      return;                                              // reduced motion / no JS: stays visible
+    }
     const slate = document.querySelector('.hero-slate');
     const video = slate && slate.querySelector('video');
     if (!video) { root.classList.add('is-live'); return; }
@@ -2342,6 +2458,67 @@
     }, { threshold: 0.4 });
 
     obs.observe(slate);
+  })();
+
+  // ============== SCROLL REVEAL + COUNT-UP ==============
+  // One IntersectionObserver drives every entrance animation. Elements marked
+  // data-rv reveal themselves; a data-rv-stagger container reveals its
+  // data-rv-item children in sequence; data-count numbers tick up. All gated on
+  // .anim, so reduced-motion / no-JS never hides anything. Setting __rvReady
+  // defuses the head-script failsafe.
+  (function () {
+    const root = document.documentElement;
+    window.__rvReady = true;
+    if (!root.classList.contains('anim')) return;   // reduced motion / no JS -> all visible
+
+    const nums = [].slice.call(document.querySelectorAll('[data-count]'));
+    nums.forEach(function (n) { n.textContent = '0'; });   // reset before they scroll into view
+
+    function countUp(n) {
+      const to = parseFloat(n.getAttribute('data-count')) || 0;
+      const dur = 1100;
+      let start = null;
+      function frame(ts) {
+        if (start === null) start = ts;
+        const p = Math.min(1, (ts - start) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);          // easeOutCubic
+        n.textContent = Math.round(eased * to);
+        if (p < 1) requestAnimationFrame(frame);
+        else n.textContent = to;
+      }
+      requestAnimationFrame(frame);
+    }
+
+    function reveal(el) {
+      if (el.hasAttribute('data-rv-stagger')) {
+        const step = parseInt(el.getAttribute('data-rv-stagger'), 10) || 80;
+        [].slice.call(el.querySelectorAll('[data-rv-item]')).forEach(function (k, i) {
+          k.style.transitionDelay = (i * step) + 'ms';
+          k.classList.add('in');
+        });
+      }
+      el.classList.add('in');
+      if (el.hasAttribute('data-count')) countUp(el);
+      [].slice.call(el.querySelectorAll('[data-count]')).forEach(countUp);
+    }
+
+    const targets = [].slice.call(document.querySelectorAll('[data-rv], [data-rv-stagger]'));
+    if (!('IntersectionObserver' in window)) { targets.forEach(reveal); return; }
+
+    // threshold 0 (not 0.15): a data-rv="clip" element starts clipped to zero
+    // visible area, so its intersection ratio is 0 — with any positive threshold
+    // the observer would never fire and the title would never unclip. Border-box
+    // entry (threshold 0) still triggers; the negative bottom margin holds the
+    // reveal until the element is ~12% into view.
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        reveal(e.target);
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -6% 0px' });
+
+    targets.forEach(function (el) { io.observe(el); });
   })();
 
 </script>
